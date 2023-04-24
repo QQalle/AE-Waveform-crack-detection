@@ -353,7 +353,8 @@ ylabel('Energy');
 plot(time2/Resolution, SpreadEner1);
 plot(time2/Resolution, SpreadEner2);
 plot(time2/Resolution, SpreadEner3);
-legend("Total", "0-200kHz", "200-400kHz", "400-600kHz");
+legend("Total", "0-200kHz", "200-400kHz", "400-600kHz",...
+    'location','south outside');
 hold off
 
 nexttile %Frequency vs Time vs Amplitude
