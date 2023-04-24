@@ -90,6 +90,7 @@ DBc = 0; %DB counter
 FFTMat = [];
 PowerMat = [];
 SortEnerList = [];
+StackEner = [];
 for k = 1 : HighestIndex
         %Find file
     baseFileName = TheFiles(k).name;
@@ -153,10 +154,12 @@ for k = 1 : HighestIndex
         SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
                                     +ImpEnerList(k);
     end
-    if 400*10^3 <= PFreq && PFreq <= 600*10^3 %Frequency band 3
+    if 400*10^3 <= PFreq %Frequency band 3
         SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
                                     +ImpEnerList(k);
     end
+    
+    %StackEner( = 
     
     PFreqList(k) = round(PFreq,1);
     AMPList(k) = round(AMP,1);
