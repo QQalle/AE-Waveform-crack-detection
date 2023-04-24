@@ -4,6 +4,10 @@ clear
     %Instructions
 %Choose no less than 2000 data collection length
 
+% 1001 => 5 MHz
+% 1002 => 5 MHz
+% 1003 => 10 MHz 
+
     %Define
 experimentNo = '1001'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
