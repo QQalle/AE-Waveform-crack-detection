@@ -5,8 +5,9 @@ clear
 %Choose no less than 2000 data collection length
 
     %Define
-ASCIIOutPut = importdata("C:\Users\simon\OneDrive - Linköpings universitet\Kandidatprojekt\Data\EXP1003.txt");
-ASCIIWaveforms = 'C:\Users\simon\OneDrive - Linköpings universitet\Kandidatprojekt\Data\EXP1003';
+experimentNo = '1003'; %Specify which experiment to analize
+ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
+ASCIIWaveforms = append('Data\EXP', experimentNo);
 
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
