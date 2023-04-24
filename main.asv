@@ -12,7 +12,7 @@ clear
 experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
-
+ApplyHAF = true;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
@@ -83,7 +83,7 @@ ImpPARA1 = transpose(ASCIIOutPut.data(:,PARA1Index));
 ImpPARA1 = ImpPARA1(1:HighestIndex);
 
 AMPList = [];
-PFreqList = [];
+PFreqList = zeros(1,HighestIndex);
 HitTimeList = [];
 HitIndexList = [];
 Matrixcracks = [];
@@ -121,11 +121,7 @@ for k = 1 : HighestIndex
         '(?<=_)\d+(?=\.txt)', 'match','once'))/1000000; %Find time of hit
     HitIndex = str2double(regexp(fullFileName,...
         '(?<=_)\d+(?=_[^_]*\.txt)', 'match','once')); %Find index of hit
-
-
     
-    
-
     if k == 1 %Define a spread vector/matrix
         Resolution = 10;
         TimeTable = zeros(N,TimeEnd*Resolution);
@@ -141,9 +137,12 @@ for k = 1 : HighestIndex
 
     FFTf = fft(FiltSignal); %Fast Fourier Transform
     FFT = fft(Signal);
-    if SumFFT(k) >= 100 %Filter High Amplitude Values
+    for p = 1 : N
+        SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
+    end
+    if SumFFT(k) >= 100 || ApplyHAF == false %Apply High Amplitude Filter
         HighAmpFilterHits = HighAmpFilterHits + 1;
-
+        K = k-1;
         fVals = (0:Nf-1)/Lf;
         power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
         [maxValue,indexMax] = max(abs(FFTf));
