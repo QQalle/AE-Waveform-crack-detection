@@ -14,7 +14,7 @@ PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 10*10^6; %Sample frequency (Hz)
+Fs = 5*10^6; %Sample frequency (Hz)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
@@ -483,41 +483,19 @@ ylim([floor(min(ImpEnerList)/10)*10 ...
 title('Energy-Frequency Spectrum');
 xlabel('Peak frequency [kHz]');
 ylabel('Energy [dB]');
-% xl1 = xline(MCminFreq/1000);
-% xl1.Color = 'r';
-% xl2 = xline(MCmaxFreq/1000);
-% xl2.Color = 'r';
-% refl = refline(0,MCminEner); %minimum energy
-% refl.Color = 'r';
-% refl = refline(0,MCmaxEner); %maximum energy
-% refl.Color = 'r';
+xl1 = xline(MCminFreq/1000);
+xl1.Color = 'r';
+xl2 = xline(MCmaxFreq/1000);
+xl2.Color = 'r';
 
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Energy, 'o');
 end
 hold off
 
-%figure
-%nexttile %Spectogram
-%spectogram(
-%ax2 = nexttile;
-%image(PFreqList, (1:height(FFTMat)), abs(FFTMat));
-%image([0 N], [0 12*10^6], abs(FFTMat));
-%colorbar
-%imagec(PFreqList, (1:height(FFTMat)), abs(FFTMat));
-
-% figure
-% fs = 10e3;
-% t = 0:1/fs:2;
-% x = vco(sawtooth(2*pi*t,0.75),[0.1 0.4]*fs,fs);
-% xy = FFT;
-% 
-% pspectrum(xy,Fs,"spectrogram")
-% %xlim([0 5]);
-
-%figure;
-%x = linspace(1,100,50);
-%tiledlayout(2,3);
+figure
+image([0 N], [0 12*10^6], abs(FFTMat));
+colorbar
 
 if istable(Matrixcracks)
         %Compute statistics
