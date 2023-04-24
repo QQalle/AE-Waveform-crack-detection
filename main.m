@@ -121,7 +121,7 @@ for k = 1 : HighestIndex
         '(?<=_)\d+(?=_[^_]*\.txt)', 'match','once')); %Find index of hit
     
     if k == 1 %Define a spread vector/matrix
-        Resolution = 2000;
+        Resolution = 10;
         TimeTable = zeros(N,TimeEnd*Resolution);
         TimeVector = zeros(1,TimeEnd*Resolution);
         EnerList = TimeVector;
@@ -129,6 +129,7 @@ for k = 1 : HighestIndex
         SpreadEner1 = TimeVector;
         SpreadEner2 = TimeVector;
         SpreadEner3 = TimeVector;
+        DerivEner = TimeVector;
     end
     TimeIndex = round(HitTime*Resolution);
     
@@ -165,7 +166,7 @@ for k = 1 : HighestIndex
     %disp(PFreq);
     StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
                                  + ImpEnerList(k);
-    
+                             
     PFreqList(k) = round(PFreq,1);
     AMPList(k) = round(AMP,1);
     HitTimeList(k) = HitTime;
@@ -228,6 +229,14 @@ for k = 1 : HighestIndex
     end
 end
 %%
+disp("Taking derivative...")
+for k = 1 : length(SpreadEner)-1
+    DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
+end
+disp("Done.")
+% DerivEner = diff(SpreadEner);
+
+%%
 close all
 if istable(Debondings)
     disp("Debondings found:"...
@@ -276,9 +285,6 @@ title('Spectogram');
 xlabel('Sample no.');
 ylabel('Frequency [kHz]');
 colorbar
-
-%figure
-%plot(SafVals,SaFFT)
 
 figure;
 x = linspace(1,100,50);
@@ -374,6 +380,11 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
 
+nexttile %Energy-time derivative
+plot(time2/Resolution, DerivEner);
+xlabel('Time [s]');
+ylabel('Energy derivative');
+
 nexttile %Frequency vs Time vs Amplitude
 hold on
 PeakFrequencyList = PFreqList/1000;
@@ -433,6 +444,11 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
+%Primary 2
+figure;
+x = linspace(1,100,50);
+tiledlayout(2,3);
+
 nexttile %Duration vs Time
 hold on
 scatter(HitTimeList, ImpDurList, 60, '.');
@@ -446,11 +462,6 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Duration, 'o');
 end
 hold off
-
-%Primary 2
-figure;
-x = linspace(1,100,50);
-tiledlayout(2,3);
 
 nexttile %Energy vs Time
 hold on

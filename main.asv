@@ -95,6 +95,7 @@ FFTMat = [];
 PowerMat = [];
 SortEnerList = [];
 StackEner = zeros(1,10^6);
+DerivEner = [];
 for k = 1 : HighestIndex
         %Find file
     baseFileName = TheFiles(k).name;
@@ -139,7 +140,7 @@ for k = 1 : HighestIndex
     [maxValue,indexMax] = max(abs(FFTf));
     PFreq = indexMax/Lf; %Peak frequency (Hz)
     AMP = max(power); %Amplitude
-    FFTMat(:,end+1) = abs(FFT(1:N/2));
+    FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
     PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
     %SpecMat(:,end+1) = spectrogram(Signal);
         %Add to list
@@ -165,7 +166,7 @@ for k = 1 : HighestIndex
     %disp(PFreq);
     StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
                                  + ImpEnerList(k);
-    
+                             
     PFreqList(k) = round(PFreq,1);
     AMPList(k) = round(AMP,1);
     HitTimeList(k) = HitTime;
@@ -228,6 +229,16 @@ for k = 1 : HighestIndex
     end
 end
 %%
+disp("Taking derivative...")
+for o = 1 : SpreadEner
+    disp(k);
+    DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
+end
+disp("Done.")
+% DerivEner = diff(SpreadEner);
+
+
+%%
 close all
 if istable(Debondings)
     disp("Debondings found:"...
@@ -271,7 +282,7 @@ else
 end
 
 figure %Spectogram
-image([0 HighestIndex], (0 5*10^6), FFTMat);
+image([0 HighestIndex], [0 1*10^6], FFTMat);
 title('Spectogram');
 xlabel('Sample no.');
 ylabel('Frequency [kHz]');
@@ -373,6 +384,9 @@ plot(time2/Resolution, SpreadEner3);
 legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
+
+nexttile
+plot(time2/Resolution, DerivEner);
 
 nexttile %Frequency vs Time vs Amplitude
 hold on
