@@ -95,6 +95,8 @@ FFTMat = [];
 PowerMat = [];
 SortEnerList = [];
 StackEner = zeros(1,10^6);
+CentroidList = [];
+
 for k = 1 : HighestIndex
         %Find file
     baseFileName = TheFiles(k).name;
@@ -142,9 +144,12 @@ for k = 1 : HighestIndex
     FFTMat(:,end+1) = FFT;
     PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
     %SpecMat(:,end+1) = spectrogram(Signal);
+
+        %Calculating the centriod for each signal
+    Iv = 1:numel(fVals);
+    CentroidList(:,end+1) = spectralCentroid(abs(FFTf(1:round(Nf/2+1))), fVals(1:round(Nf/2+1)));
+
         %Add to list
-    
-    
     TimeTable(:,TimeIndex) = abs(FFT);
     
     SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
@@ -191,6 +196,7 @@ for k = 1 : HighestIndex
                         SafVals = fVals;
                         SaVals = (0:N-1)/L;
                         SaPFreq = PFreq;
+                        SaCentroid = CentroidList(k);
                     end
                     Duration = ImpDurList(k);
                     Energy = ImpEnerList(k);
@@ -263,6 +269,18 @@ if istable(Matrixcracks) %Sample waveforms
     nexttile %FFT
     plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
+    xline(SaCentroid);
+    %xlim([0 10^6]);
+    xlabel('Frequency [Hz]');
+    ylabel('Voltage [V]');
+
+    nexttile %FFT with highest Freq. Centroid
+    [MaxCentroid, MaxCentroidIndex] = max(CentroidList);
+    MaxCentroidFFT = FFTMat(:, MaxCentroidIndex);
+    MaxCentroidVals = (0:N-1)/L;
+    plot(MaxCentroidVals(1:round(SaNf/2+1)), abs(MaxCentroidFFT(1:round(SaNf/2+1))));
+    title('FFT with highest Freq. Centroid');
+    xline(MaxCentroid);
     %xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
@@ -475,6 +493,22 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.Load, Matrixcracks.Amplitude, 'o');
 end
 hold off
+
+nexttile %Amplitude-Frequency Spectrum
+hold on
+plot(CentroidList, ImpAmpList, 'x');
+xlim([floor(min(CentroidList)) ...
+    ceil(max(CentroidList))]); %nearest 10-number of max sample
+ylim([floor(min(ImpAmpList)) ...
+    ceil(max(ImpAmpList))]);
+title('Amplitude-Frequency Centroid Spectrum');
+xlabel('Frequency Centriod [kHz]');
+ylabel('Amplitude [dB]');
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.Load, Matrixcracks.Amplitude, 'o');
+end
+hold off
+
 %{
 nexttile %Frequency vs Time vs Energy
 hold on
