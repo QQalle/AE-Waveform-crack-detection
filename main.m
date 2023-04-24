@@ -139,7 +139,7 @@ for k = 1 : HighestIndex
     [maxValue,indexMax] = max(abs(FFTf));
     PFreq = indexMax/Lf; %Peak frequency (Hz)
     AMP = max(power); %Amplitude
-    FFTMat(:,end+1) = FFT;
+    FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
     PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
     %SpecMat(:,end+1) = spectrogram(Signal);
         %Add to list
@@ -263,17 +263,22 @@ if istable(Matrixcracks) %Sample waveforms
     nexttile %FFT
     plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
-    xlim([0 10^6]);
+    %xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
 else
         disp("No matrix cracks found");
 end
 
-figure %Frequency Spectrum
-image([0 N], [0 12*10^6], abs(FFTMat));
-title('Frequency Spectrum');
+figure %Spectogram
+image([0 HighestIndex], [0 1*10^6], FFTMat);
+title('Spectogram');
+xlabel('Sample no.');
+ylabel('Frequency [kHz]');
 colorbar
+
+%figure
+%plot(SafVals,SaFFT)
 
 figure;
 x = linspace(1,100,50);
