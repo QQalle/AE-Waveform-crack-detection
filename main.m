@@ -159,7 +159,7 @@ for k = 1 : HighestIndex
                                     +ImpEnerList(k);
     end
     
-    %StackEner( = 
+    %StackEner(round(PFreqList(k))) = 
     
     PFreqList(k) = round(PFreq,1);
     AMPList(k) = round(AMP,1);
@@ -356,7 +356,7 @@ ylabel('Energy');
 plot(time2/Resolution, SpreadEner1);
 plot(time2/Resolution, SpreadEner2);
 plot(time2/Resolution, SpreadEner3);
-legend("Total", "0-200kHz", "200-400kHz", "400-600kHz",...
+legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
 
