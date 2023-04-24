@@ -12,7 +12,7 @@ clear
 experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
-ApplyHAF = false;
+ApplyHAF = true;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
@@ -97,7 +97,9 @@ SortEnerList = [];
 StackEner = zeros(1,10^6);
 SumFFT = zeros(1,HighestIndex);
 HighAmpFilterHits = 0;
+K = 0;
 for k = 1 : HighestIndex
+    K = K + 1;
         %Find file
     baseFileName = TheFiles(k).name;
     %baseFileName = FilesSorted(k);
@@ -137,18 +139,17 @@ for k = 1 : HighestIndex
 
     FFTf = fft(FiltSignal); %Fast Fourier Transform
     FFT = fft(Signal);
+    FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
     for p = 1 : N
         SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
     end
     if SumFFT(k) >= 100 || ApplyHAF == false %Apply High Amplitude Filter
         HighAmpFilterHits = HighAmpFilterHits + 1;
-
         fVals = (0:Nf-1)/Lf;
         power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
         [maxValue,indexMax] = max(abs(FFTf));
         PFreq = indexMax/Lf; %Peak frequency (Hz)
         AMP = max(power); %Amplitude
-        FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
         PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
 
         TimeTable(:,TimeIndex) = abs(FFT);
@@ -172,10 +173,14 @@ for k = 1 : HighestIndex
         StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
                                      + ImpEnerList(k);
 
-        PFreqList(k) = round(PFreq,1);
-        AMPList(k) = round(AMP,1);
-        HitTimeList(k) = HitTime;
-        HitIndexList(k) = HitIndex;
+        PFreqList(K) = round(PFreq,1);
+        AMPList(K) = round(AMP,1);
+        HitTimeList(K) = HitTime;
+        HitIndexList(K) = HitIndex;
+        HAFImpAmpList(K) = ImpAmpList(k);
+        HAFImpDurList(K) = ImpDurList(k);
+        HAFImpEnerList(K) = ImpEnerList(k);
+        HAFImpPARA1(K) = ImpPARA1(k);
             %Define matrix crack
         if MCminFreq <= PFreq && PFreq <= MCmaxFreq
             if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
@@ -232,6 +237,8 @@ for k = 1 : HighestIndex
                 end
             end
         end
+    else
+        K = K-1;
     end
 end
 disp("HighAmpFilterHits:" + HighAmpFilterHits)
@@ -307,11 +314,11 @@ tiledlayout(2,3);
 
 nexttile %Amplitude-Frequency
 hold on
-plot(PFreqList./1000, ImpAmpList, 'x');
+plot(PFreqList./1000, HAFImpAmpList, 'x');
 xlim([floor(min(PFreqList./1000)/10)*10 ...
     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
-ylim([floor(min(ImpAmpList)/10)*10 ...
-    ceil(max(ImpAmpList)/10)*10]);
+ylim([floor(min(HAFImpAmpList)/10)*10 ...
+    ceil(max(HAFImpAmpList)/10)*10]);
 title('Amplitude-Frequency');
 xlabel('Peak frequency [kHz]');
 ylabel('Amplitude [dB]');
@@ -326,12 +333,12 @@ refl.Color = 'r';
 
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Amplitude, 'o');
-    legend(plus("Hits: ",num2str(HighestIndex)),...
+    legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks.HitIndex))),...
         'location','south outside');
 else
-    legend(plus("Hits: ",num2str(HighestIndex)),...
+    legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks))),'location','south outside');
 end
@@ -403,9 +410,9 @@ ylabel('Energy derivative');
 nexttile %Frequency vs Time vs Amplitude
 hold on
 PeakFrequencyList = PFreqList/1000;
-tbl = table(HitTimeList,PeakFrequencyList,ImpAmpList);
-sca = scatter(HitTimeList,PeakFrequencyList,60,ImpAmpList,'.');
-sca.CData = tbl.ImpAmpList;
+tbl = table(HitTimeList,PeakFrequencyList,HAFImpAmpList);
+sca = scatter(HitTimeList,PeakFrequencyList,60,HAFImpAmpList,'.');
+sca.CData = tbl.HAFImpAmpList;
 cb = colorbar;
 refl = refline(0,MCminFreq/1000); %minimum frequency
 refl.Color = 'r';
@@ -466,7 +473,7 @@ tiledlayout(2,3);
 
 nexttile %Duration vs Time
 hold on
-scatter(HitTimeList, ImpDurList, 60, '.');
+scatter(HitTimeList, HAFImpDurList, 60, '.');
 title('Duration');
 %xlim([0 TimeEnd]);
 xlabel('Time [s]');
@@ -480,7 +487,7 @@ hold off
 
 nexttile %Energy vs Time
 hold on
-scatter(HitTimeList, ImpEnerList, 60, '.');
+scatter(HitTimeList, HAFImpEnerList, 60, '.');
 title('Energy vs time');
 %xlim([0 TimeEnd]);
 ylim([0 3*10^5]);
@@ -496,14 +503,14 @@ hold off
 nexttile %Load
 
 hold on
-scatter(ImpPARA1, ImpAmpList, 60, '.');
+scatter(HAFImpPARA1, HAFImpAmpList, 60, '.');
 %refl = refline(0,MCminAmp); %minimum amp
 %refl.Color = 'r';
 %refl = refline(0,MCmaxAmp); %maximum amp
 %refl.Color = 'r';
 title('Amplitude vs Load');
 %xlim([0 TimeEnd]);
-ylim([floor(min(ImpAmpList))*0.9 ceil(max(ImpAmpList))*1.1]);
+ylim([floor(min(HAFImpAmpList))*0.9 ceil(max(HAFImpAmpList))*1.1]);
 xlabel('Load [ ]');
 ylabel("Amplitude [dB]");
 if istable(Matrixcracks) %If true = there are matrixcracks
