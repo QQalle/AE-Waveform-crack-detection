@@ -12,7 +12,7 @@ clear
 experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
-
+ApplyHAF = false;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
@@ -95,6 +95,8 @@ FFTMat = [];
 PowerMat = [];
 SortEnerList = [];
 StackEner = zeros(1,10^6);
+SumFFT = zeros(1,HighestIndex);
+HighAmpFilterHits = 0;
 for k = 1 : HighestIndex
         %Find file
     baseFileName = TheFiles(k).name;
@@ -132,111 +134,114 @@ for k = 1 : HighestIndex
         DerivEner = TimeVector;
     end
     TimeIndex = round(HitTime*Resolution);
-    
+
     FFTf = fft(FiltSignal); %Fast Fourier Transform
     FFT = fft(Signal);
-    fVals = (0:Nf-1)/Lf;
-    power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
-    [maxValue,indexMax] = max(abs(FFTf));
-    PFreq = indexMax/Lf; %Peak frequency (Hz)
-    AMP = max(power); %Amplitude
-    FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
-    PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
-    %SpecMat(:,end+1) = spectrogram(Signal);
-        %Add to list
-    
-    
-    TimeTable(:,TimeIndex) = abs(FFT);
-    
-    SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
-                                +ImpEnerList(k);
-    
-    if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
-        SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
-                                    +ImpEnerList(k);
+    for p = 1 : N
+        SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
     end
-    if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
-        SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
+    if SumFFT(k) >= 100 || ApplyHAF == false %Apply High Amplitude Filter
+        HighAmpFilterHits = HighAmpFilterHits + 1;
+
+        fVals = (0:Nf-1)/Lf;
+        power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
+        [maxValue,indexMax] = max(abs(FFTf));
+        PFreq = indexMax/Lf; %Peak frequency (Hz)
+        AMP = max(power); %Amplitude
+        FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
+        PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
+
+        TimeTable(:,TimeIndex) = abs(FFT);
+
+        SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
                                     +ImpEnerList(k);
-    end
-    if 400*10^3 <= PFreq %Frequency band 3
-        SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
-                                    +ImpEnerList(k);
-    end
-    %disp(PFreq);
-    StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
-                                 + ImpEnerList(k);
-                             
-    PFreqList(k) = round(PFreq,1);
-    AMPList(k) = round(AMP,1);
-    HitTimeList(k) = HitTime;
-    HitIndexList(k) = HitIndex;
-        %Define matrix crack
-    if MCminFreq <= PFreq && PFreq <= MCmaxFreq
-        if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
-            if MCminEner <= ImpEnerList(k) && ImpEnerList(k) <= MCmaxEner
-                if MCminDur <= ImpDurList(k)
-                    MCc = MCc + 1;
-                    if MCc == 1
-                        Matrixcracks = table(); %Make table first time
+
+        if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
+            SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
+                                        +ImpEnerList(k);
+        end
+        if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
+            SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
+                                        +ImpEnerList(k);
+        end
+        if 400*10^3 <= PFreq %Frequency band 3
+            SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
+                                        +ImpEnerList(k);
+        end
+        %disp(PFreq);
+        StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
+                                     + ImpEnerList(k);
+
+        PFreqList(k) = round(PFreq,1);
+        AMPList(k) = round(AMP,1);
+        HitTimeList(k) = HitTime;
+        HitIndexList(k) = HitIndex;
+            %Define matrix crack
+        if MCminFreq <= PFreq && PFreq <= MCmaxFreq
+            if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
+                if MCminEner <= ImpEnerList(k) && ImpEnerList(k) <= MCmaxEner
+                    if MCminDur <= ImpDurList(k)
+                        MCc = MCc + 1;
+                        if MCc == 1
+                            Matrixcracks = table(); %Make table first time
+                        end
+                        if MCc == SampleNumber %Take a sample
+                            SaFiltSignal = FiltSignal;
+                            SaSignal = Signal;
+                            SaDur = ImpDurList(k);
+                            SaNf = Nf;
+                            SaHitTime = HitTime;
+                            SaHitIndex = HitIndex;
+                            SaFFT = FFTf;
+                            Sapower = power;
+                            SafVals = fVals;
+                            SaVals = (0:N-1)/L;
+                            SaPFreq = PFreq;
+                        end
+                        Duration = ImpDurList(k);
+                        Energy = ImpEnerList(k);
+                        Amplitude = ImpAmpList(k);
+                        PeakFrequency = PFreq/1000;
+                        Load = ImpPARA1(k);
+                        Matrixcracks(MCc,:) = table(HitIndex,HitTime,...
+                            PeakFrequency,Amplitude,Duration,Energy,...
+                            Load);
                     end
-                    if MCc == SampleNumber %Take a sample
-                        SaFiltSignal = FiltSignal;
-                        SaSignal = Signal;
-                        SaDur = ImpDurList(k);
-                        SaNf = Nf;
-                        SaHitTime = HitTime;
-                        SaHitIndex = HitIndex;
-                        SaFFT = FFTf;
-                        Sapower = power;
-                        SafVals = fVals;
-                        SaVals = (0:N-1)/L;
-                        SaPFreq = PFreq;
-                    end
-                    Duration = ImpDurList(k);
-                    Energy = ImpEnerList(k);
-                    Amplitude = ImpAmpList(k);
-                    PeakFrequency = PFreq/1000;
-                    Load = ImpPARA1(k);
-                    Matrixcracks(MCc,:) = table(HitIndex,HitTime,...
-                        PeakFrequency,Amplitude,Duration,Energy,...
-                        Load);
                 end
             end
         end
-    end
-    
-        %Define debonding
-    if DBminFreq <= PFreq && PFreq <= DBmaxFreq
-        if DBminAmp <= ImpAmpList(k) && ImpAmpList(k) <= DBmaxAmp
-            if DBminEner <= ImpEnerList(k) && ImpEnerList(k) <= DBmaxEner
-                if DBminDur <= ImpDurList(k)
-                    DBc = DBc + 1;
-                    if DBc == 1
-                        Debondings = table(); %Make table first time
+
+            %Define debonding
+        if DBminFreq <= PFreq && PFreq <= DBmaxFreq
+            if DBminAmp <= ImpAmpList(k) && ImpAmpList(k) <= DBmaxAmp
+                if DBminEner <= ImpEnerList(k) && ImpEnerList(k) <= DBmaxEner
+                    if DBminDur <= ImpDurList(k)
+                        DBc = DBc + 1;
+                        if DBc == 1
+                            Debondings = table(); %Make table first time
+                        end
+                        Duration = ImpDurList(k);
+                        Energy = ImpEnerList(k);
+                        Amplitude = ImpAmpList(k);
+                        PeakFrequency = PFreq/1000;
+                        Load = ImpPARA1;
+                        Debondings(DBc,:) = table(HitIndex,HitTime,...
+                            PeakFrequency,Amplitude,Duration,Energy,...
+                            Load);
                     end
-                    Duration = ImpDurList(k);
-                    Energy = ImpEnerList(k);
-                    Amplitude = ImpAmpList(k);
-                    PeakFrequency = PFreq/1000;
-                    Load = ImpPARA1;
-                    Debondings(DBc,:) = table(HitIndex,HitTime,...
-                        PeakFrequency,Amplitude,Duration,Energy,...
-                        Load);
                 end
             end
         end
     end
 end
+disp("HighAmpFilterHits:" + HighAmpFilterHits)
 %%
 disp("Taking derivative...")
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
 end
 disp("Done.")
-% DerivEner = diff(SpreadEner);
 
-%%
 close all
 if istable(Debondings)
     disp("Debondings found:"...
@@ -279,9 +284,19 @@ else
         disp("No matrix cracks found");
 end
 
-figure %Spectogram
+
+figure 
+tiledlayout(2,1);
+nexttile %Spectogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
 title('Spectogram');
+xlabel('Sample no.');
+ylabel('Frequency [kHz]');
+colorbar
+
+nexttile %High amplitude filter
+image([0 HighestIndex], [0 1*10^6], SumFFT);
+title('High amplitude filter');
 xlabel('Sample no.');
 ylabel('Frequency [kHz]');
 colorbar
