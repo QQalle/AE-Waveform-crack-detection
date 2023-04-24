@@ -249,7 +249,7 @@ if istable(Matrixcracks) %Sample waveforms
     refline(0,-max(SaSignal)*2); %bot threshold
     xline(PT*10^6); %Pretrigger line
     xline(PT*10^6+SaDur); %Filter line
-    %xlim([0 Fs]);
+    xlim([0 max(SaVals*L/Fs*10^6)]);
     %ylim([-ceil(max(FiltSignal)), ceil(max(FiltSignal))]);
 
     nexttile %Power spectrum
@@ -263,26 +263,30 @@ if istable(Matrixcracks) %Sample waveforms
     nexttile %FFT
     plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
-    %xlim([0 10^6]);
+    xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
 else
         disp("No matrix cracks found");
 end
-%a = abs(SaFFT(1:Nf/2+1));
-    %Primary figure
+
+figure %Frequency Spectrum
+image([0 N], [0 12*10^6], abs(FFTMat));
+title('Frequency Spectrum');
+colorbar
+
 figure;
 x = linspace(1,100,50);
 tiledlayout(2,3);
 
-nexttile %Amplitude-Frequency Spectrum
+nexttile %Amplitude-Frequency
 hold on
 plot(PFreqList./1000, ImpAmpList, 'x');
 xlim([floor(min(PFreqList./1000)/10)*10 ...
     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
 ylim([floor(min(ImpAmpList)/10)*10 ...
     ceil(max(ImpAmpList)/10)*10]);
-title('Amplitude-Frequency Spectrum');
+title('Amplitude-Frequency');
 xlabel('Peak frequency [kHz]');
 ylabel('Amplitude [dB]');
 xl1 = xline(MCminFreq/1000);
@@ -498,10 +502,6 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 %}
-
-figure
-image([0 N], [0 12*10^6], abs(FFTMat));
-colorbar
 
 if istable(Matrixcracks)
         %Compute statistics
