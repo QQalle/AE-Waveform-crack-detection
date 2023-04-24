@@ -5,7 +5,7 @@ clear
 %Choose no less than 2000 data collection length
 
     %Define
-experimentNo = '1003'; %Specify which experiment to analize
+experimentNo = '1002'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
 
@@ -471,7 +471,7 @@ hold off
 
 nexttile %Energy-Frequency Spectrum
 hold on
-plot(PFreqList./1000, ImpEnerList);
+scatter(PFreqList./1000, ImpEnerList,'.');
 xlim([floor(min(PFreqList./1000)/10)*10 ...
     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
 ylim([floor(min(ImpEnerList)/10)*10 ...
@@ -493,13 +493,13 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-figure
+%figure
 %nexttile %Spectogram
 %spectogram(
 %ax2 = nexttile;
 %image(PFreqList, (1:height(FFTMat)), abs(FFTMat));
-image([0 N], [0 12*10^6], abs(FFTMat));
-colorbar
+%image([0 N], [0 12*10^6], abs(FFTMat));
+%colorbar
 %imagec(PFreqList, (1:height(FFTMat)), abs(FFTMat));
 
 % figure
@@ -511,9 +511,9 @@ colorbar
 % pspectrum(xy,Fs,"spectrogram")
 % %xlim([0 5]);
 
-figure;
-x = linspace(1,100,50);
-tiledlayout(2,3);
+%figure;
+%x = linspace(1,100,50);
+%tiledlayout(2,3);
 
 if istable(Matrixcracks)
         %Compute statistics
