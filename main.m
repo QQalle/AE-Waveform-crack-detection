@@ -5,8 +5,8 @@ clear
 %Choose no less than 2000 data collection length
 
     %Define
-ASCIIOutPut = importdata("C:\Users\simon\OneDrive - Linköpings universitet\Kandidatprojekt\Data\EXP1003.txt");
-ASCIIWaveforms = 'C:\Users\simon\OneDrive - Linköpings universitet\Kandidatprojekt\Data\EXP1003';
+ASCIIOutPut = importdata("C:\Users\simon\Documents\AE-Waveform-crack-detection\Data\EXP1003.txt");
+ASCIIWaveforms = 'C:\Users\simon\Documents\AE-Waveform-crack-detection\Data\EXP1003';
 
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
@@ -123,7 +123,6 @@ for k = 1 : HighestIndex
         SpreadEner1 = TimeVector;
         SpreadEner2 = TimeVector;
         SpreadEner3 = TimeVector;
-
     end
     TimeIndex = round(HitTime*Resolution);
     
@@ -149,11 +148,11 @@ for k = 1 : HighestIndex
         SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
                                     +ImpEnerList(k);
     end
-    if 200 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
+    if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
         SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
                                     +ImpEnerList(k);
     end
-    if 400 <= PFreq && PFreq <= 600*10^3 %Frequency band 3
+    if 400*10^3 <= PFreq && PFreq <= 600*10^3 %Frequency band 3
         SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
                                     +ImpEnerList(k);
     end
