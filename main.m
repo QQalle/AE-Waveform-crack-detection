@@ -5,7 +5,7 @@ clear
 %Choose no less than 2000 data collection length
 
     %Define
-experimentNo = '1001'; %Specify which experiment to analize
+experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
 
@@ -14,7 +14,7 @@ PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 5*10^6; %Sample frequency (Hz)
+Fs = 10*10^6; %Sample frequency (Hz)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
@@ -383,6 +383,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
+%{
 nexttile %Amplitude vs Time
 hold on
 scatter(HitTimeList, ImpAmpList, 60, '.');
@@ -397,6 +398,25 @@ xlabel('Time [s]');
 ylabel("Amplitude [dB]");
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Amplitude, 'o');
+end
+hold off
+%}
+
+nexttile %Energy-Frequency Spectrum
+hold on
+plot((1:length(StackEner)),StackEner);
+xlim([0 1000]); 
+ylim([0 max(StackEner)]);
+title('Energy-Frequency Spectrum');
+xlabel('Peak frequency [kHz]');
+ylabel('Energy [aJ]');
+xl1 = xline(MCminFreq/1000);
+xl1.Color = 'r';
+xl2 = xline(MCmaxFreq/1000);
+xl2.Color = 'r';
+
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.PeakFrequency, Matrixcracks.Energy, 'o');
 end
 hold off
 
@@ -451,8 +471,8 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.Load, Matrixcracks.Amplitude, 'o');
 end
 hold off
-
-nexttile %Frequency vs Time vs Amplitude
+%{
+nexttile %Frequency vs Time vs Energy
 hold on
 PeakFrequencyList = PFreqList/1000;
 tbl = table(HitTimeList,PeakFrequencyList,ImpEnerList);
@@ -464,7 +484,7 @@ refl.Color = 'r';
 refl = refline(0,MCmaxFreq/1000); %maximum frequency
 refl.Color = 'r';
 title(cb,'dB')
-title('Frequency vs Time vs Amplitude');
+title('Frequency vs Time vs Energy');
 %xlim([0 TimeEnd]);
 ylim([0 1000]);
 xlabel('Time [s]');
@@ -473,24 +493,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.PeakFrequency, 'o');
 end
 hold off
-
-nexttile %Energy-Frequency Spectrum
-hold on
-plot((1:length(StackEner)),StackEner);
-xlim([0 1000]); 
-ylim([0 max(StackEner)]);
-title('Energy-Frequency Spectrum');
-xlabel('Peak frequency [kHz]');
-ylabel('Energy [aJ]');
-% xl1 = xline(MCminFreq/1000);
-% xl1.Color = 'r';
-% xl2 = xline(MCmaxFreq/1000);
-% xl2.Color = 'r';
-
-if istable(Matrixcracks) %If true = there are matrixcracks
-    plot(Matrixcracks.PeakFrequency, Matrixcracks.Energy, 'o');
-end
-hold off
+%}
 
 figure
 image([0 N], [0 12*10^6], abs(FFTMat));
