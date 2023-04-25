@@ -1,12 +1,11 @@
-close all
 clear
 
     %Instructions
 %Choose no less than 2000 data collection length
 
-% 1001 => 5 MHz
-% 1002 => 5 MHz
-% 1003 => 10 MHz 
+% 1001 => Fs = 5 MHz
+% 1002 => Fs = 5 MHz
+% 1003 => Fs = 10 MHz 
 
     %Define
 experimentNo = '1003'; %Specify which experiment to analize
@@ -24,6 +23,7 @@ Fs = 10*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 2; %Matrix crack number in order of happening
+HAFfilter = -1500;
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -96,6 +96,7 @@ PowerMat = [];
 SortEnerList = [];
 StackEner = zeros(1,10^6);
 SumFFT = zeros(1,HighestIndex);
+BinFFT = zeros(1,HighestIndex);
 HighAmpFilterHits = 0;
 K = 0;
 for k = 1 : HighestIndex
@@ -143,8 +144,9 @@ for k = 1 : HighestIndex
     for p = 1 : N
         SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
     end
-    if SumFFT(k) >= 100 || ApplyHAF == false %Apply High Amplitude Filter
+    if SumFFT(k) >= HAFfilter || ApplyHAF == false %Apply High Amplitude Filter
         HighAmpFilterHits = HighAmpFilterHits + 1;
+        BinFFT(k) = 250;
         fVals = (0:Nf-1)/Lf;
         power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
         [maxValue,indexMax] = max(abs(FFTf));
@@ -291,7 +293,6 @@ else
         disp("No matrix cracks found");
 end
 
-
 figure 
 tiledlayout(2,1);
 nexttile %Spectogram
@@ -302,11 +303,10 @@ ylabel('Frequency [kHz]');
 colorbar
 
 nexttile %High amplitude filter
-image([0 HighestIndex], [0 1*10^6], SumFFT);
+image([0 HighestIndex], [0 0], BinFFT);
 title('High amplitude filter');
 xlabel('Sample no.');
-ylabel('Frequency [kHz]');
-colorbar
+% colorbar
 
 figure;
 x = linspace(1,100,50);
@@ -359,8 +359,7 @@ xlim([0 max(HitTimeList)]);
 ylim([0 max(SpreadHits)+2]);
 xlabel('Time [s]');
 ylabel('Hits');
-    %Debondings
-DBSpreadHits = zeros(1,length(time));
+DBSpreadHits = zeros(1,length(time)); %Debondings
 if istable(Debondings) %If true = there are matrixcracks
     for i = 1 : length(Debondings.HitIndex)
         DBSpreadHits(ceil(Debondings.HitTime(i)):end) = ...
@@ -371,8 +370,7 @@ end
 if istable(Debondings) %If true = there are debondings
     plot(time, DBSpreadHits,'g');
 end
-    %Matrix cracks
-MCSpreadHits = zeros(1,length(time));
+MCSpreadHits = zeros(1,length(time)); %Matrix cracks
 if istable(Matrixcracks) %If true = there are matrixcracks
     for i = 1 : length(Matrixcracks.HitIndex)
         MCSpreadHits(ceil(Matrixcracks.HitTime(i)):end) = ...
