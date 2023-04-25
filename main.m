@@ -23,7 +23,7 @@ Fs = 10*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 2; %Matrix crack number in order of happening
-HAFfilter = -1500;
+HAFfilter = 0; %Default: -1500
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -251,7 +251,7 @@ for k = 1 : length(SpreadEner)-1
 end
 disp("Done.")
 
-close all
+%close all
 if istable(Debondings)
     disp("Debondings found:"...
         + num2str(length(Debondings.HitIndex)));
@@ -286,7 +286,7 @@ if istable(Matrixcracks) %Sample waveforms
     nexttile %FFT
     plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
-    %xlim([0 10^6]);
+    xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
 else
@@ -297,15 +297,15 @@ figure
 tiledlayout(2,1);
 nexttile %Spectogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
-title('Spectogram');
-xlabel('Sample no.');
+title('Spectrogram');
+xlabel('Waveform no.');
 ylabel('Frequency [kHz]');
 colorbar
 
 nexttile %High amplitude filter
 image([0 HighestIndex], [0 0], BinFFT);
 title('High amplitude filter');
-xlabel('Sample no.');
+xlabel('Waveform no.');
 % colorbar
 
 figure;
