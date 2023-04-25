@@ -1,14 +1,21 @@
 clear
+%{
+    Instructions
+Choose no less than 2000 data collection length
 
-    %Instructions
-%Choose no less than 2000 data collection length
+    1001:
+Fs = 5 MHz
+TimeEnd = 20.736
+    1002:
+Fs = 5 MHz
+TimeEnd = 
+    1003:
+Fs = 10 MHz
+TimeEnd = 
 
-% 1001 => Fs = 5 MHz
-% 1002 => Fs = 5 MHz
-% 1003 => Fs = 10 MHz 
-
+%}
     %Define
-experimentNo = '1003'; %Specify which experiment to analize
+experimentNo = '1001'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
 ApplyHAF = false;
@@ -17,13 +24,13 @@ PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 10*10^6; %Sample frequency (Hz)
+Fs = 5*10^6; %Sample frequency (Hz)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
-TimeEnd = 80; %Experiment cutoff time [s]
-SampleNumber = 2; %Matrix crack number in order of happening
-HAFfilter = -1500; %Default: -1500
+TimeEnd = 50; %Experiment cutoff time [s]
+SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
+HAFfilter = 0; %Default: -1500
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -123,7 +130,7 @@ for k = 1 : HighestIndex
         '(?<=_)\d+(?=_[^_]*\.txt)', 'match','once')); %Find index of hit
     
     if k == 1 %Define a spread vector/matrix
-        Resolution = 1;
+        Resolution = 20; %Recommended 1 - 20 Default: 10
         TimeTable = zeros(N,TimeEnd*Resolution);
         TimeVector = zeros(1,TimeEnd*Resolution);
         EnerList = TimeVector;
@@ -132,6 +139,9 @@ for k = 1 : HighestIndex
         SpreadEner2 = TimeVector;
         SpreadEner3 = TimeVector;
         DerivEner = TimeVector;
+        DerivEner1 = TimeVector;
+        DerivEner2 = TimeVector;
+        DerivEner3 = TimeVector;
     end
     TimeIndex = round(HitTime*Resolution);
 
@@ -240,16 +250,27 @@ for k = 1 : HighestIndex
         K = K-1;
     end
 end
-disp("HighAmpFilterHits:" + HighAmpFilterHits)
 %%
+if ApplyHAF == true
+    disp("HAF enabled");
+    disp("Hits reduced:" + (HighestIndex - HighAmpFilterHits));
+    disp("Hits remaining:" + HighAmpFilterHits);
+else
+    disp("HAF disabled");
+end
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
+    DerivEner1(k) = (SpreadEner1(k+1)-SpreadEner1(k))/(k+1);
+    DerivEner2(k) = (SpreadEner2(k+1)-SpreadEner2(k))/(k+1);
+    DerivEner3(k) = (SpreadEner3(k+1)-SpreadEner3(k))/(k+1);
 end
 
 close all
 if istable(Debondings)
     disp("Debondings found:"...
         + num2str(length(Debondings.HitIndex)));
+else
+    disp("No debondings found");
 end
 
 if istable(Matrixcracks) %Sample waveforms
@@ -332,11 +353,11 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks.HitIndex))),...
-        'location','south outside');
+        'location','south outside',"AutoUpdate","off");
 else
     legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
-        num2str(length(Matrixcracks))),'location','south outside');
+        num2str(length(Matrixcracks))),'location','south outside',"AutoUpdate","off");
 end
 patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
     [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
@@ -387,14 +408,18 @@ nexttile %Total Accumulated Acoustic Energy
 hold on
 time2 = (0:length(TimeVector)-1);
 plot(time2/Resolution, SpreadEner);
+% FOR POLYNOMIAL % 
+% p = polyfit(time2/Resolution,SpreadEner,20);
+% pol = polyval(p, time2/Resolution);
+% plot(time2/Resolution, pol,'--');
 title('Accumulated Acoustic Energy');
-%xlim([0 length(TimeVector/Resolution)]);
+xlim([0 TimeEnd]);
 %ylim([0 max(SpreadEner)+2]);
 xlabel('Time [s]');
 ylabel('Energy');
-plot(time2/Resolution, SpreadEner1);
-plot(time2/Resolution, SpreadEner2);
-plot(time2/Resolution, SpreadEner3);
+plot(time2/Resolution, SpreadEner1,'--');
+plot(time2/Resolution, SpreadEner2,'--');
+plot(time2/Resolution, SpreadEner3,'--');
 legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
@@ -402,6 +427,9 @@ hold off
 nexttile %Energy-time derivative
 hold on
 plot(time2/Resolution, DerivEner);
+plot(time2/Resolution, DerivEner1,'--');
+plot(time2/Resolution, DerivEner2,'--');
+plot(time2/Resolution, DerivEner3,'--');
 xlabel('Time [s]');
 ylabel('Energy derivative');
 if istable(Matrixcracks) %If true = there are matrixcracks
@@ -559,10 +587,10 @@ if istable(Matrixcracks)
     MCDevEner = max(Matrixcracks.Energy) - round(MCAvgEner,1);
     
     disp("MATRIX CRACK STATISTICS");
-    disp("Avg peak frequency:  " + num2str(MCAvgFreq) + "kHz ± " + num2str(MCDevFreq)); 
-    disp("Avg peak amplitude:   " + num2str(MCAvgAmp) + "dB ± " + num2str(MCDevAmp)); 
-    disp("Avg peak duration:   " + num2str(MCAvgDur) + "μs ± " + num2str(MCDevDur)); 
-    disp("Avg peak energy:         " + num2str(MCAvgEner) + " ± " + num2str(MCDevEner)); 
+    disp("Avg peak frequency: " + num2str(MCAvgFreq) + "kHz ± " + num2str(MCDevFreq)); 
+    disp("Avg amplitude: " + num2str(MCAvgAmp) + "dB ± " + num2str(MCDevAmp)); 
+    disp("Avg duration: " + num2str(MCAvgDur) + "μs ± " + num2str(MCDevDur)); 
+    disp("Avg energy: " + num2str(MCAvgEner) + "aJ ± " + num2str(MCDevEner)); 
 end
 if istable(Debondings)
     DBAvgFreq = round(mean(Debondings.PeakFrequency),1);
@@ -576,11 +604,9 @@ if istable(Debondings)
     DBDevEner = max(Debondings.Energy) - round(DBAvgEner,1);
     
     disp("DEBONDING STATISTICS");
-    disp("Avg peak frequency:  " + num2str(DBAvgFreq) + "kHz ± " + num2str(DBDevFreq)); 
-    disp("Avg peak amplitude:   " + num2str(DBAvgAmp) + "dB ± " + num2str(DBDevAmp)); 
-    disp("Avg peak duration:   " + num2str(DBAvgDur) + "μs ± " + num2str(DBDevDur)); 
-    disp("Avg peak energy:         " + num2str(DBAvgEner) + " ± " + num2str(DBDevEner)); 
+    disp("Avg peak frequency: " + num2str(DBAvgFreq) + "kHz ± " + num2str(DBDevFreq)); 
+    disp("Avg amplitude: " + num2str(DBAvgAmp) + "dB ± " + num2str(DBDevAmp)); 
+    disp("Avg duration: " + num2str(DBAvgDur) + "μs ± " + num2str(DBDevDur)); 
+    disp("Avg energy: " + num2str(DBAvgEner) + "aJ ± " + num2str(DBDevEner)); 
 end
-
-
-
+disp('Done.');
