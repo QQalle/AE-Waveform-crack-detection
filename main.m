@@ -11,7 +11,7 @@ clear
 experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
-ApplyHAF = true;
+ApplyHAF = false;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
@@ -23,7 +23,7 @@ Fs = 10*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 2; %Matrix crack number in order of happening
-HAFfilter = 0; %Default: -1500
+HAFfilter = -1500; %Default: -1500
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -126,7 +126,7 @@ for k = 1 : HighestIndex
         '(?<=_)\d+(?=_[^_]*\.txt)', 'match','once')); %Find index of hit
     
     if k == 1 %Define a spread vector/matrix
-        Resolution = 10;
+        Resolution = 1;
         TimeTable = zeros(N,TimeEnd*Resolution);
         TimeVector = zeros(1,TimeEnd*Resolution);
         EnerList = TimeVector;
@@ -245,13 +245,11 @@ for k = 1 : HighestIndex
 end
 disp("HighAmpFilterHits:" + HighAmpFilterHits)
 %%
-disp("Taking derivative...")
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
 end
-disp("Done.")
 
-%close all
+close all
 if istable(Debondings)
     disp("Debondings found:"...
         + num2str(length(Debondings.HitIndex)));
@@ -293,7 +291,7 @@ else
         disp("No matrix cracks found");
 end
 
-figure 
+figure('Position',[100 100 1000 500]); 
 tiledlayout(2,1);
 nexttile %Spectogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
@@ -301,12 +299,21 @@ title('Spectrogram');
 xlabel('Waveform no.');
 ylabel('Frequency [kHz]');
 colorbar
+annotation('textbox', [0.8 0.87 0.8 0.1], ...
+    'String', append('Total hits:', num2str(HighestIndex)), ...
+    'Color', [1 0 0], ...
+    'FontWeight', 'bold', ...
+    'EdgeColor', 'none')
 
 nexttile %High amplitude filter
 image([0 HighestIndex], [0 0], BinFFT);
-title('High amplitude filter');
+title(append('HAF (',num2str(HAFfilter),')'));
 xlabel('Waveform no.');
-% colorbar
+annotation('textbox', [0.79 0.393 0.8 0.1], ...
+    'String', append('Filtered hits:', num2str(K)), ...
+    'Color', [1 0 0], ...
+    'FontWeight', 'bold', ...
+    'EdgeColor', 'none')
 
 figure;
 x = linspace(1,100,50);
