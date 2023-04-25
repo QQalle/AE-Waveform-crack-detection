@@ -148,7 +148,7 @@ for k = 1 : HighestIndex
 
         %Calculating the centriod for each signal
     Vals = (0:N-1)/L;
-    CentroidList(k) = spectralCentroid(abs(FFT(1:round(N/2+1))),...
+    CentroidList(k) = spectralCentroid(log(abs(FFT(1:round(N/2+1)))),...
         Vals(1:round(N/2+1)),'SpectrunType' , 'magnitude');
     FFTf(numel(FFT)) = 0;
     FFTfMat(:,end+1) = FFTf;
