@@ -1,4 +1,3 @@
-close all
 clear
 
     %Instructions
@@ -12,7 +11,7 @@ clear
 experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
-ApplyHAF = true;
+ApplyHAF = false;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
@@ -24,7 +23,7 @@ Fs = 10*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 2; %Matrix crack number in order of happening
-HAFfilter = -5000;
+HAFfilter = -1500; %Default: -1500
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -127,7 +126,7 @@ for k = 1 : HighestIndex
         '(?<=_)\d+(?=_[^_]*\.txt)', 'match','once')); %Find index of hit
     
     if k == 1 %Define a spread vector/matrix
-        Resolution = 10;
+        Resolution = 1;
         TimeTable = zeros(N,TimeEnd*Resolution);
         TimeVector = zeros(1,TimeEnd*Resolution);
         EnerList = TimeVector;
@@ -147,7 +146,7 @@ for k = 1 : HighestIndex
     end
     if SumFFT(k) >= HAFfilter || ApplyHAF == false %Apply High Amplitude Filter
         HighAmpFilterHits = HighAmpFilterHits + 1;
-        SumFFT(k) = 1;
+        BinFFT(k) = 250;
         fVals = (0:Nf-1)/Lf;
         power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
         [maxValue,indexMax] = max(abs(FFTf));
@@ -246,11 +245,9 @@ for k = 1 : HighestIndex
 end
 disp("HighAmpFilterHits:" + HighAmpFilterHits)
 %%
-disp("Taking derivative...")
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
 end
-disp("Done.")
 
 close all
 if istable(Debondings)
@@ -287,27 +284,36 @@ if istable(Matrixcracks) %Sample waveforms
     nexttile %FFT
     plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
-    %xlim([0 10^6]);
+    xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
 else
         disp("No matrix cracks found");
 end
 
-figure 
+figure('Position',[100 100 1000 500]); 
 tiledlayout(2,1);
 nexttile %Spectogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
-title('Spectogram');
-xlabel('Sample no.');
+title('Spectrogram');
+xlabel('Waveform no.');
 ylabel('Frequency [kHz]');
 colorbar
+annotation('textbox', [0.8 0.87 0.8 0.1], ...
+    'String', append('Total hits:', num2str(HighestIndex)), ...
+    'Color', [1 0 0], ...
+    'FontWeight', 'bold', ...
+    'EdgeColor', 'none')
 
 nexttile %High amplitude filter
-image([0 HighestIndex], [0 0], SumFFT);
-title('High amplitude filter');
-xlabel('Sample no.');
-colorbar
+image([0 HighestIndex], [0 0], BinFFT);
+title(append('HAF (',num2str(HAFfilter),')'));
+xlabel('Waveform no.');
+annotation('textbox', [0.79 0.393 0.8 0.1], ...
+    'String', append('Filtered hits:', num2str(K)), ...
+    'Color', [1 0 0], ...
+    'FontWeight', 'bold', ...
+    'EdgeColor', 'none')
 
 figure;
 x = linspace(1,100,50);
@@ -323,26 +329,20 @@ ylim([floor(min(HAFImpAmpList)/10)*10 ...
 title('Amplitude-Frequency');
 xlabel('Peak frequency [kHz]');
 ylabel('Amplitude [dB]');
-xl1 = xline(MCminFreq/1000);
-xl1.Color = 'r';
-xl2 = xline(MCmaxFreq/1000);
-xl2.Color = 'r';
-refl = refline(0,MCminAmp); %minimum amp
-refl.Color = 'r';
-refl = refline(0,MCmaxAmp); %maximum amp
-refl.Color = 'r';
-
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Amplitude, 'o');
     legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks.HitIndex))),...
-        'location','south outside');
+        "Filtered area",'location','south outside');
 else
     legend(plus("Hits: ",num2str(K)),...
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks))),'location','south outside');
 end
+patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
+    [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
+    'EdgeColor','r');
 hold off
 
 nexttile %Hitcounter
@@ -402,9 +402,17 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
 hold off
 
 nexttile %Energy-time derivative
+hold on
 plot(time2/Resolution, DerivEner);
 xlabel('Time [s]');
 ylabel('Energy derivative');
+if istable(Matrixcracks) %If true = there are matrixcracks
+    for i = 1 : length(Matrixcracks.HitTime)
+        xli = xline(Matrixcracks.HitTime(i));
+        xli.Color = [1 0 0];
+    end
+end
+hold off
 
 nexttile %Frequency vs Time vs Amplitude
 hold on

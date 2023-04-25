@@ -66,9 +66,6 @@ FileTimes = str2double(regexp({TheFiles.name},...
 [~, HighestIndex] = max(FileTimes(FileTimes <= TimeEnd));
 
     %Import variables
-%TimeIndex = find(contains(ASCIIOutPut.textdata, 'SSSSSSSS.mmmuuun'));
-%ImpTimeList = transpose(ASCIIOutPut.data(:,TimeIndex));
-%ImpTimeList = ImpTimeList(1:HighestIndex);
 DurationIndex = find(contains(ASCIIOutPut.textdata, 'DURATION'));
 ImpDurList = transpose(ASCIIOutPut.data(:,DurationIndex));
 ImpDurList = ImpDurList(1:HighestIndex);
@@ -296,9 +293,10 @@ tiledlayout(2,1);
 nexttile %Spectogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
 title('Spectrogram');
+cb = colorbar;
+title(cb,'        Intensity')
 xlabel('Waveform no.');
 ylabel('Frequency [kHz]');
-colorbar
 annotation('textbox', [0.8 0.87 0.8 0.1], ...
     'String', append('Total hits:', num2str(HighestIndex)), ...
     'Color', [1 0 0], ...
@@ -329,15 +327,6 @@ ylim([floor(min(HAFImpAmpList)/10)*10 ...
 title('Amplitude-Frequency');
 xlabel('Peak frequency [kHz]');
 ylabel('Amplitude [dB]');
-xl1 = xline(MCminFreq/1000);
-xl1.Color = 'r';
-xl2 = xline(MCmaxFreq/1000);
-xl2.Color = 'r';
-refl = refline(0,MCminAmp); %minimum amp
-refl.Color = 'r';
-refl = refline(0,MCmaxAmp); %maximum amp
-refl.Color = 'r';
-
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Amplitude, 'o');
     legend(plus("Hits: ",num2str(K)),...
@@ -349,6 +338,9 @@ else
         plus("Matrix cracks: ",...
         num2str(length(Matrixcracks))),'location','south outside');
 end
+patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
+    [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
+    'EdgeColor','r');
 hold off
 
 nexttile %Hitcounter
@@ -408,9 +400,17 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
 hold off
 
 nexttile %Energy-time derivative
+hold on
 plot(time2/Resolution, DerivEner);
 xlabel('Time [s]');
 ylabel('Energy derivative');
+if istable(Matrixcracks) %If true = there are matrixcracks
+    for i = 1 : length(Matrixcracks.HitTime)
+        xli = xline(Matrixcracks.HitTime(i));
+        xli.Color = [1 0 0];
+    end
+end
+hold off
 
 nexttile %Frequency vs Time vs Amplitude
 hold on
