@@ -218,7 +218,7 @@ for i = 1 : length(CSVData.Fun_Time)
        
 end
 CSVDataOffs = fillmissing(CSVDataOffs,"next");
-CSVDataOffs = fillmissing(CSVDataOffs,"previous");
+%CSVDataOffs = fillmissing(CSVDataOffs,"previous");
 PullStop = CSVData.Fun_Time(end) + TestStart; %(s) When tensile test ends (stops pulling)
 disp("Tensile test end =" + num2str(PullStop) + "s");
 
