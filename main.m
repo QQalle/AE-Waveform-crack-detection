@@ -4,14 +4,14 @@ clear
 Choose no less than 2000 data collection length
 
     1001:
-Fs = 5 MHz
-TimeEnd = 20.736
+Fs = 5*10^6 %(Hz)
+PullStop = 56.382 %(s)
     1002:
-Fs = 5 MHz
-TimeEnd = 
+Fs = 5*10^6 %(Hz)
+PullStop = 51.838 %(s)
     1003:
-Fs = 10 MHz
-TimeEnd = 
+Fs = 10*10^6 %(Hz)
+PullStop = 48.27 %(s)
 
 %}
     %Define
@@ -25,10 +25,11 @@ PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
 Fs = 5*10^6; %Sample frequency (Hz)
+PullStop = 56.382 %(s)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
-TimeEnd = 50; %Experiment cutoff time [s]
+TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = 0; %Default: -1500
 
@@ -420,6 +421,7 @@ ylabel('Energy');
 plot(time2/Resolution, SpreadEner1,'--');
 plot(time2/Resolution, SpreadEner2,'--');
 plot(time2/Resolution, SpreadEner3,'--');
+xline(PullStop);
 legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
