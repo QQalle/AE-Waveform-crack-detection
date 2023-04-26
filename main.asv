@@ -4,34 +4,38 @@ clear
 Choose no less than 2000 data collection length
 
     1001:
-Fs = 5*10^6 (Hz)
-PullStop = 56.382
+Fs = 5*10^6 %(Hz)
+PullStop = 56.382 %(s)
     1002:
-Fs = 5*10^6 (Hz)
-PullStop = 
+Fs = 5*10^6 %(Hz)
+PullStop = 51.838 %(s)
     1003:
-Fs = 10*10^6 (Hz)
-PullStop = 56.382
-
+Fs = 10*10^6 %(Hz)
+PullStop = 48.27 %(s)
+TimeEnd = 124
 %}
     %Define
-experimentNo = '1001'; %Specify which experiment to analize
+experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
+CSVRawData = readtable(append('Data\Specimen_RawData_',...
+    experimentNo,'.csv'),"Delimiter",';');
+CSVData = varfun(@(x) str2double(replace(x, ",", ".")), CSVRawData);
+CSVData = CSVData(2:end,:);
 ApplyHAF = false;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 5*10^6; %Sample frequency (Hz)
+Fs = 10*10^6; %Sample frequency (Hz)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = 0; %Default: -1500
-PullStop = 
+PullStop = 48.27; %(s) When tensile test ends (stops pulling)
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -86,6 +90,11 @@ ImpEnerList = ImpEnerList(1:HighestIndex);
 PARA1Index = find(contains(ASCIIOutPut.textdata, 'PARA1'));
 ImpPARA1 = transpose(ASCIIOutPut.data(:,PARA1Index));
 ImpPARA1 = ImpPARA1(1:HighestIndex);
+
+PARAStart = 1;
+while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
+    PARAStart = PARAStart + 1;
+end
 
 AMPList = [];
 PFreqList = [];
@@ -143,6 +152,7 @@ for k = 1 : HighestIndex
         DerivEner1 = TimeVector;
         DerivEner2 = TimeVector;
         DerivEner3 = TimeVector;
+        FunTime = TimeVector;
     end
     TimeIndex = round(HitTime*Resolution);
 
@@ -251,6 +261,21 @@ for k = 1 : HighestIndex
         K = K-1;
     end
 end
+time2 = (0:length(TimeVector)-1);
+%%
+CSVData.Fun_Time = CSVData.Fun_Time + CSVData.Fun_Time(PARAStart);
+CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
+    'VariableNames',CSVData.Properties.VariableNames);
+CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
+for i = 1 : length(CSVData.Fun_Time)
+    t = round(CSVData.Fun_Time(i),1)+1;
+    index = t*Resolution;
+    CSVDataOffs(index,2:end) = CSVData(i,2:end);
+%     if CSVDataOffs(index,2) == 0
+        
+end
+CSVDataOffs = fillmissing(CSVDataOffs,"Previous");
+CSVDataOffs = fillmissing(CSVDataOffs,0);
 %%
 if ApplyHAF == true
     disp("HAF enabled");
@@ -259,6 +284,7 @@ if ApplyHAF == true
 else
     disp("HAF disabled");
 end
+
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
     DerivEner1(k) = (SpreadEner1(k+1)-SpreadEner1(k))/(k+1);
@@ -274,6 +300,8 @@ else
     disp("No debondings found");
 end
 
+% % % % % % % % % % PLOTTING % % % % % % % % % % 
+%%
 if istable(Matrixcracks) %Sample waveforms
     disp("Matrix cracks found:"...
         + num2str(length(Matrixcracks.HitIndex)));
@@ -407,7 +435,6 @@ hold off
 
 nexttile %Total Accumulated Acoustic Energy
 hold on
-time2 = (0:length(TimeVector)-1);
 plot(time2/Resolution, SpreadEner);
 % FOR POLYNOMIAL % 
 % p = polyfit(time2/Resolution,SpreadEner,20);
@@ -421,7 +448,7 @@ ylabel('Energy');
 plot(time2/Resolution, SpreadEner1,'--');
 plot(time2/Resolution, SpreadEner2,'--');
 plot(time2/Resolution, SpreadEner3,'--');
-xline(TimeEnd);
+xline(PullStop);
 legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
@@ -575,6 +602,12 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 %}
+
+figure
+hold on
+plot(CSVData.Fun_Time+0.8, CSVData.Fun_Load)
+plot(HitTimeList, ImpPARA1*10000)
+hold off
 
 if istable(Matrixcracks)
         %Compute statistics

@@ -12,26 +12,30 @@ PullStop = 51.838 %(s)
     1003:
 Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
-
+TimeEnd = 124
 %}
     %Define
-experimentNo = '1001'; %Specify which experiment to analize
+experimentNo = '1003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data\EXP', experimentNo);
+CSVRawData = readtable(append('Data\Specimen_RawData_',...
+    experimentNo,'.csv'),"Delimiter",';');
+CSVData = varfun(@(x) str2double(replace(x, ",", ".")), CSVRawData);
+CSVData = CSVData(2:end,:);
 ApplyHAF = false;
     %Hardware calibrations
 PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 5*10^6; %Sample frequency (Hz)
-PullStop = 56.382 %(s)
+Fs = 10*10^6; %Sample frequency (Hz)
 
     %Software parameters
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = 0; %Default: -1500
+PullStop = 48.27; %(s) When tensile test ends (stops pulling)
 
     %Matrixcrack definition
 MCminFreq = 75*10^3; %[Hz]
@@ -86,6 +90,11 @@ ImpEnerList = ImpEnerList(1:HighestIndex);
 PARA1Index = find(contains(ASCIIOutPut.textdata, 'PARA1'));
 ImpPARA1 = transpose(ASCIIOutPut.data(:,PARA1Index));
 ImpPARA1 = ImpPARA1(1:HighestIndex);
+
+PARAStart = 1;
+while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
+    PARAStart = PARAStart + 1;
+end
 
 AMPList = [];
 PFreqList = [];
@@ -143,6 +152,7 @@ for k = 1 : HighestIndex
         DerivEner1 = TimeVector;
         DerivEner2 = TimeVector;
         DerivEner3 = TimeVector;
+        FunTime = TimeVector;
     end
     TimeIndex = round(HitTime*Resolution);
 
@@ -251,6 +261,22 @@ for k = 1 : HighestIndex
         K = K-1;
     end
 end
+time2 = (0:length(TimeVector)-1);
+
+TestStart = HitTimeList(PARAStart);
+%%
+
+CSVData.Fun_Time = CSVData.Fun_Time + TestStart;
+CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
+    'VariableNames',CSVData.Properties.VariableNames);
+CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
+for i = 1 : length(CSVData.Fun_Time)
+    t = round(CSVData.Fun_Time(i),1)+1;
+    index = t*Resolution;
+    CSVDataOffs(index,2:end) = CSVData(i,2:end);
+       
+end
+CSVDataOffs = fillmissing(CSVDataOffs,"next");
 %%
 if ApplyHAF == true
     disp("HAF enabled");
@@ -259,6 +285,7 @@ if ApplyHAF == true
 else
     disp("HAF disabled");
 end
+
 for k = 1 : length(SpreadEner)-1
     DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
     DerivEner1(k) = (SpreadEner1(k+1)-SpreadEner1(k))/(k+1);
@@ -274,6 +301,8 @@ else
     disp("No debondings found");
 end
 
+% % % % % % % % % % PLOTTING % % % % % % % % % % 
+%%
 if istable(Matrixcracks) %Sample waveforms
     disp("Matrix cracks found:"...
         + num2str(length(Matrixcracks.HitIndex)));
@@ -407,7 +436,6 @@ hold off
 
 nexttile %Total Accumulated Acoustic Energy
 hold on
-time2 = (0:length(TimeVector)-1);
 plot(time2/Resolution, SpreadEner);
 % FOR POLYNOMIAL % 
 % p = polyfit(time2/Resolution,SpreadEner,20);
@@ -464,25 +492,6 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-%{
-nexttile %Amplitude vs Time
-hold on
-scatter(HitTimeList, ImpAmpList, 60, '.');
-refl = refline(0,MCminAmp); %minimum amp
-refl.Color = 'r';
-refl = refline(0,MCmaxAmp); %maximum amp
-refl.Color = 'r';
-title('Amplitude vs Time');
-%xlim([0 TimeEnd]);
-ylim([floor(min(ImpAmpList))*0.9 ceil(max(ImpAmpList))*1.1]);
-xlabel('Time [s]');
-ylabel("Amplitude [dB]");
-if istable(Matrixcracks) %If true = there are matrixcracks
-    plot(Matrixcracks.HitTime, Matrixcracks.Amplitude, 'o');
-end
-hold off
-%}
-
 nexttile %Energy-Frequency Spectrum
 hold on
 plot((1:length(StackEner)),StackEner);
@@ -524,7 +533,6 @@ nexttile %Energy vs Time
 hold on
 scatter(HitTimeList, HAFImpEnerList, 60, '.');
 title('Energy vs time');
-%xlim([0 TimeEnd]);
 ylim([0 3*10^5]);
 xlabel('Time [s]');
 ylabel("Energy [aJ]");
@@ -539,12 +547,7 @@ nexttile %Load
 
 hold on
 scatter(HAFImpPARA1, HAFImpAmpList, 60, '.');
-%refl = refline(0,MCminAmp); %minimum amp
-%refl.Color = 'r';
-%refl = refline(0,MCmaxAmp); %maximum amp
-%refl.Color = 'r';
 title('Amplitude vs Load');
-%xlim([0 TimeEnd]);
 ylim([floor(min(HAFImpAmpList))*0.9 ceil(max(HAFImpAmpList))*1.1]);
 xlabel('Load [ ]');
 ylabel("Amplitude [dB]");
@@ -552,29 +555,11 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.Load, Matrixcracks.Amplitude, 'o');
 end
 hold off
-%{
-nexttile %Frequency vs Time vs Energy
+
+figure
 hold on
-PeakFrequencyList = PFreqList/1000;
-tbl = table(HitTimeList,PeakFrequencyList,ImpEnerList);
-sca = scatter(HitTimeList,PeakFrequencyList,60,ImpEnerList,'.');
-sca.CData = tbl.ImpEnerList;
-cb = colorbar;
-refl = refline(0,MCminFreq/1000); %minimum frequency
-refl.Color = 'r';
-refl = refline(0,MCmaxFreq/1000); %maximum frequency
-refl.Color = 'r';
-title(cb,'dB')
-title('Frequency vs Time vs Energy');
-%xlim([0 TimeEnd]);
-ylim([0 1000]);
-xlabel('Time [s]');
-ylabel("Peak Frequency [kHz]");
-if istable(Matrixcracks) %If true = there are matrixcracks
-    plot(Matrixcracks.HitTime, Matrixcracks.PeakFrequency, 'o');
-end
+plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
 hold off
-%}
 
 if istable(Matrixcracks)
         %Compute statistics
