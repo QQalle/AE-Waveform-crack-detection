@@ -149,9 +149,9 @@ hold off
 figure('name', 'Energy-time derivative')
 hold on
 plot(time2/Resolution, DerivEner);
-% plot(time2/Resolution, DerivEner1,'--');
-% plot(time2/Resolution, DerivEner2,'--');
-% plot(time2/Resolution, DerivEner3,'--');
+plot(time2/Resolution, DerivEner1,'--');
+plot(time2/Resolution, DerivEner2,'--');
+plot(time2/Resolution, DerivEner3,'--');
 title('Energy Derivative vs Time');
 xlabel('Time [s]');
 ylabel('Energy derivative');
@@ -243,32 +243,10 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-figure('name', 'Load vs Time')
+figure('name', 'Load')
+hold on
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
-title('Load vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Load [N]');
-
-figure('name', 'Stress vs Time')
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStress)
-title('Stress vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Stress [MPa]');
-
-figure('name', 'Energy vs Stress')
-plot(CSVDataOffs.Fun_TensileStress, SpreadEner)
-title('Energy vs Stress');
-xlabel('Stress [MPa]');
-ylabel('Energy [aJ]');
-
-figure('name', 'Strain vs Time')
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
-title('Strain vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Strain [%]');
+hold off
 
 if istable(Matrixcracks)
         %Compute statistics
