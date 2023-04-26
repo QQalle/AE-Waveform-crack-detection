@@ -2,6 +2,10 @@ clear
 %{
     Instructions
 Choose no less than 2000 data collection length
+Make sure to format files as following example:
+AEwin Output export: "EXP[experiment number].txt"
+AEwin Waveforms folder: "EXP[experiment number]"
+Tensile machine output CSV: "Specimen_RawData_[experiment number].csv"
 
     1001:
 Fs = 5*10^6 %(Hz)
@@ -262,9 +266,7 @@ for k = 1 : HighestIndex
     end
 end
 time2 = (0:length(TimeVector)-1);
-
 TestStart = HitTimeList(PARAStart);
-%%
 
 CSVData.Fun_Time = CSVData.Fun_Time + TestStart;
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
