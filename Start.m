@@ -33,8 +33,8 @@ Fs = 10*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
-ApplyHAF = false;
-HAFfilter = -1500; %Default: -1500
+ApplyHAF = false; %Filter out noise based on FFT integral amplitude
+HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
 MCminFreq = 75*10^3; %[Hz]
