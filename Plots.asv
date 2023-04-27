@@ -20,8 +20,8 @@ if istable(Matrixcracks) %Sample waveforms
     xlabel('Frequency [Hz]');
     ylabel('Amplitude [dB]');
     example = 'example_string_123';
-    %%
-    figure('name', 'FFT', 'Position',[100 100 1000 1000]) %FFT
+    
+    figure('name', 'FFT', 'Position',[100 100 1000 500]) %FFT
     area(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
     xlim([0 10^6]);
@@ -255,18 +255,35 @@ xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Stress [MPa]');
 
-figure('name', 'Energy vs Stress')
-plot(CSVDataOffs.Fun_TensileStress, SpreadEner)
-title('Energy vs Stress');
-xlabel('Stress [MPa]');
-ylabel('Energy [aJ]');
-
 figure('name', 'Strain vs Time')
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
 title('Strain vs Time');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Strain [%]');
+
+figure('name', 'Counts vs Time');
+hold on
+scatter(HitTimeList, ImpCountList,'.');
+title('Counts vs Time');
+xlabel('Time [s]');
+ylabel("Counts");
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.HitTime, Matrixcracks.Counts, 'o');
+end
+hold off
+
+figure('name','Rise time vs time') %Rise time vs time
+hold on
+scatter(HitTimeList, ImpRiseList, '.');
+title('Rise time vs time');
+xlabel('Time [s]');
+ylabel("Rise time [μs]");
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.HitTime, Matrixcracks.RiseTime, 'o');
+end
+hold off
+
 
 if istable(Matrixcracks)
         %Compute statistics

@@ -46,7 +46,6 @@ MCminEner = 0; %[kJ]
 MCmaxEner = 10^12; %[aJ]
 MCminDur = 1500; %[μs]
 MCminCount = 100;
-MCminRise = 0; %[s]
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]
@@ -56,8 +55,6 @@ DBmaxAmp = 65; %[dB]
 DBminEner = 0; %[kJ]
 DBmaxEner = 10^12; %[aJ]
 DBminDur = 0; %[μs]
-DBminCount = 100;
-DBminRise = 0; %[s]
 
 run Calculations.m
 run Plots.m

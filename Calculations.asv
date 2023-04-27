@@ -156,7 +156,7 @@ for k = 1 : HighestIndex
                 if MCminEner <= ImpEnerList(k) && ImpEnerList(k) <= MCmaxEner
                     if MCminDur <= ImpDurList(k)
                         if MCminCount <= ImpCountList(k)
-                            if MCminRise <= ImpRiseList(k)
+                            if MCmin
                                 MCc = MCc + 1;
                                 if MCc == 1
                                     Matrixcracks = table(); %Make table first time
@@ -179,13 +179,10 @@ for k = 1 : HighestIndex
                                 Amplitude = ImpAmpList(k);
                                 PeakFrequency = PFreq/1000;
                                 Load = ImpPARA1(k);
-                                Counts = ImpCountList(k);
-                                RiseTime = ImpRiseList(k);
                                 Matrixcracks(MCc,:) = table(HitIndex,HitTime,...
                                     PeakFrequency,Amplitude,Duration,Energy,...
-                                    Load,Counts,RiseTime);
-                            end
-                        end
+                                    Load);
+                            
                     end
                 end
             end

@@ -262,6 +262,27 @@ xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Strain [%]');
 
+figure('name', 'Counts vs Time');
+hold on
+scatter(HitTimeList, ImpCountList,'.');
+title('Counts vs Time');
+xlabel('Time [s]');
+ylabel("Counts");
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.HitTime, Matrixcracks.Counts, 'o');
+end
+hold off
+
+figure('name','Rise time vs time')
+hold on
+scatter(HitTimeList, ImpRiseList, '.');
+title('Rise time vs time');
+xlabel('Time [s]');
+ylabel("Rise time [μs]");
+if istable(Matrixcracks) %If true = there are matrixcracks
+    plot(Matrixcracks.HitTime, Matrixcracks.RiseTime, 'o');
+end
+hold off
 
 
 if istable(Matrixcracks)
