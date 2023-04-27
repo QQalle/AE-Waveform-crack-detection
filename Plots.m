@@ -1,10 +1,7 @@
 if istable(Matrixcracks) %Sample waveforms
     disp("Matrix cracks found:"...
         + num2str(length(Matrixcracks.HitIndex)));
-    figure('name', 'Sample Waveform')
-    tiledlayout(2,2);
-
-    nexttile %Waveform
+    figure('name', 'Sample Waveform') %Waveform
     plot(SaVals*L/Fs*10^6, SaSignal);
     title('Sample Waveform');
     xlabel('Time [μs]');
@@ -16,20 +13,21 @@ if istable(Matrixcracks) %Sample waveforms
     xlim([0 max(SaVals*L/Fs*10^6)]);
     %ylim([-ceil(max(FiltSignal)), ceil(max(FiltSignal))]);
 
-    nexttile %Power spectrum
+    figure('name', 'Power spectrum') %Power spectrum
     plot(SafVals(1:round(SaNf/2+1)), Sapower);
     xlim([0 10^6]);
     title('Sample Power spectrum');
     xlabel('Frequency [Hz]');
     ylabel('Amplitude [dB]');
     example = 'example_string_123';
-
-    nexttile %FFT
-    plot(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
+    
+    figure('name', 'FFT', 'Position',[100 100 1000 500]) %FFT
+    area(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
     xlim([0 10^6]);
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
+    legend('Total integral amplitude');
 else
         disp("No matrix cracks found");
 end
@@ -257,18 +255,14 @@ xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Stress [MPa]');
 
-figure('name', 'Energy vs Stress')
-plot(CSVDataOffs.Fun_TensileStress, SpreadEner)
-title('Energy vs Stress');
-xlabel('Stress [MPa]');
-ylabel('Energy [aJ]');
-
 figure('name', 'Strain vs Time')
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
 title('Strain vs Time');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Strain [%]');
+
+
 
 if istable(Matrixcracks)
         %Compute statistics

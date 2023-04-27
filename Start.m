@@ -1,7 +1,5 @@
 clear
 close all
-experimentNo = '1003'; %Specify which experiment to analyze
-run Import_data.m
 %{
     Instructions
 Choose no less than 2000 data collection length
@@ -21,6 +19,9 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
+
+experimentNo = '1003'; %Specify which experiment to analyze
+run Import_data.m
 
     %Input hardware calibrations
 PT = 20*10^-6; %Pre-trigger
