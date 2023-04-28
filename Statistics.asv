@@ -13,6 +13,8 @@ CheckSTDEner = round(3*std(CheckVariableTable.Energy));
 CheckSTDCount = round(3*std(CheckVariableTable.Counts));
 CheckSTDRise = round(3*std(CheckVariableTable.RiseTime));
 
+if find(
+
 disp("CHECKED STATISTICS MEAN ± 3σ");
 disp("Avg peak frequency: " + num2str(CheckAvgFreq) + "kHz ± " + num2str(CheckSTDFreq)); 
 disp("Avg amplitude: " + num2str(CheckAvgAmp) + "dB ± " + num2str(CheckSTDAmp)); 
@@ -79,9 +81,7 @@ if istable(Debondings)
 end
 Stats.Properties.VariableNames = {'MEAN | Frequency | 3σ' 'Amplitude' 'Duration'...
     'Energy' 'Counts' 'Rise time'};
-% Stats.tableStyle = {width("60%")};
-%setColwidth(Stats, 1, 1)
-Stats.Properties.
+
 if istable(Matrixcracks) %Check what rows to name
     if istable(Debondings)
         Stats.Properties.RowNames = {'Check' 'Matrix cracks' 'Debondings'};

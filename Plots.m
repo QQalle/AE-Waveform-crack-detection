@@ -269,7 +269,7 @@ ylabel('Strain [%]');
 
 figure('name', 'Counts vs Time');
 hold on
-scatter(HitTimeList, ImpCountList,'.');
+scatter(HitTimeList, HAFImpCountList,'.');
 title('Counts vs Time');
 xlabel('Time [s]');
 ylabel("Counts");
@@ -281,7 +281,7 @@ hold off
 
 figure('name','Rise time vs time')
 hold on
-scatter(HitTimeList, ImpRiseList, '.');
+scatter(HitTimeList, HAFImpRiseList, '.');
 title('Rise time vs time');
 xlabel('Time [s]');
 ylabel("Rise time [μs]");

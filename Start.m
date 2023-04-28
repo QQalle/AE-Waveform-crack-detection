@@ -34,7 +34,7 @@ Fs = 5*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 80; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
-ApplyHAF = false; %Filter out noise based on FFT integral amplitude
+ApplyHAF = true; %Filter out noise based on FFT integral amplitude
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
@@ -62,8 +62,8 @@ DBminRise = 0; %[s]
 CheckVariable = "peak frequency";
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
-CheckRangeMIN = 250;
-CheckRangeMAX = 400;
+CheckRangeMIN = 0;
+CheckRangeMAX = 400000;
 
 
 run Calculations.m

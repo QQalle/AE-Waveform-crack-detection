@@ -154,6 +154,8 @@ for k = 1 : HighestIndex
         HAFImpDurList(K) = ImpDurList(k);
         HAFImpEnerList(K) = ImpEnerList(k);
         HAFImpPARA1(K) = ImpPARA1(k);
+        HAFImpCountList(K) = ImpCountList(k);
+        HAFImpRiseList(K) = ImpRiseList(k);
             %Collect all values to a table
         Duration = ImpDurList(k);
         Energy = ImpEnerList(k);
@@ -215,38 +217,43 @@ for k = 1 : HighestIndex
         end
             %Check variable
         if CheckVariable == "duration"
-            if CheckRangeMIN <= ImpDurList(k) && ImpDurList(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpDurList(K) && ImpDurList(K) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "peak frequency"
-            if CheckRangeMIN <= PFreqList(k)/1000 && PFreqList(k)/1000 <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= PFreqList(K)/1000 && PFreqList(K)/1000 <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "amplitude"
-            if CheckRangeMIN <= ImpAmpList(k) && ImpAmpList(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpAmpList(K) && ImpAmpList(K) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "energy"
-            if CheckRangeMIN <= ImpEnerList(k) && ImpEnerList(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpEnerList(K) && ImpEnerList(K) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "counts"
-            if CheckRangeMIN <= ImpCountList(k) && ImpCountList(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpCountList(K) && ImpCountList(K) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "rise time"
-            if CheckRangeMIN <= ImpRiseList(k) && ImpRiseList(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpRiseList(K) && ImpRiseList(K) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         elseif CheckVariable == "parametric 1"
-            if CheckRangeMIN <= ImpPARA1(k) && ImpPARA1(k) <= CheckRangeMAX
-                CheckVariableTable(end+1,:) = AllValues(k,:);
+            if CheckRangeMIN <= ImpPARA1(K) && ImpPARA1(k) <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(K,:);
             end
         end
         
     else
         K = K-1;
     end
+end
+if width(CheckVariableTable) == 0
+    CheckVariableTable = array2table(nan([1 width(AllValues)]));
+    CheckVariableTable.Properties.VariableNames = ...
+        AllValues.Properties.VariableNames;
 end
 time2 = (0:length(TimeVector)-1);
 TestStart = HitTimeList(PARAStart);
