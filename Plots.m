@@ -59,7 +59,7 @@ annotation('textbox', [0.79 0.393 0.8 0.1], ...
 
 figure('name', 'Amplitude-Frequency')
 hold on
-plot(PFreqList./1000, HAFImpAmpList, 'x');
+plot(PFreqList./1000, HAFImpAmpList, '.');
 xlim([floor(min(PFreqList./1000)/10)*10 ...
     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
 ylim([floor(min(HAFImpAmpList)/10)*10 ...
@@ -81,7 +81,7 @@ end
 patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
     [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
     'EdgeColor','r');
-
+plot(CheckVariableTable.PeakFrequency, CheckVariableTable.Amplitude,'*');
 hold off
 
 figure('name', 'Hitcounter')
@@ -123,7 +123,6 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(time, MCSpreadHits,'r');
 end
 legend("Hits","Debondings","Matrix cracks",'location','south outside');
-plot(HitTimeList, CheckVariableList,'*');
 hold off
 
 figure('name', 'Total Accumulated Acoustic Energy')
@@ -202,7 +201,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Energy, 'o');
 end
 hold off
-%%
+
 figure('name', 'Duration vs Time')
 hold on
 scatter(HitTimeList, HAFImpDurList, 60, '.');
@@ -212,12 +211,14 @@ xlabel('Time [s]');
 ylabel("Duration [μs]");
 refl = refline(0,MCminDur); %minimum duration
 refl.Color = 'r';
+refl2 = refline(0,N/Fs*10^6);
+refl2.Color = 'k';
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Duration, 'o');
 end
-plot(HitTimeList, CheckVariableList,'*');
+plot(CheckVariableTable.HitTime, CheckVariableTable.Duration,'*');
 hold off
-%%
+
 figure('name', 'Energy vs Time')
 hold on
 scatter(HitTimeList, HAFImpEnerList, 60, '.');
@@ -230,6 +231,7 @@ refl.Color = 'r';
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Energy, 'o');
 end
+plot(CheckVariableTable.HitTime, CheckVariableTable.Energy,'*');
 hold off
 
 figure('name','Amplitude vs Load')
@@ -274,6 +276,7 @@ ylabel("Counts");
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Counts, 'o');
 end
+plot(CheckVariableTable.HitTime, CheckVariableTable.Counts,'*');
 hold off
 
 figure('name','Rise time vs time')
@@ -285,6 +288,7 @@ ylabel("Rise time [μs]");
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.RiseTime, 'o');
 end
+plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
 
 

@@ -45,7 +45,8 @@ while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
     PARAStart = PARAStart + 1;
 end
 
-CheckVariableTable = array2table(NaN(HighestIndex,1));
+AllValues = table();
+CheckVariableTable = table();
 AMPList = [];
 PFreqList = [];
 HitTimeList = [];
@@ -64,7 +65,6 @@ BinFFT = zeros(1,HighestIndex);
 HighAmpFilterHits = 0;
 K = 0;
 LongDur = 0;
-AllValues = table()
 for k = 1 : HighestIndex
     K = K + 1;
         %Find file
@@ -77,7 +77,7 @@ for k = 1 : HighestIndex
     N = length(Signal);  %number of samples    
     L = N/Fs; %total time of waveform (s)
         %Filter signal to duration
-    if N > (PT+ImpDurList(k)*10^-6)*Fs %Check if duration > collection time
+    if N > (PT+ImpDurList(k)*10^-6)*Fs %Check if collection time > duration
         FiltSignal = Signal(round(PT*Fs):round((PT+ImpDurList(k)*10^-6)*Fs));
     else
         FiltSignal = Signal(round(PT*Fs):N);
@@ -213,36 +213,34 @@ for k = 1 : HighestIndex
                 end
             end
         end
-
-        
             %Check variable
-        if CheckVariable == 'duration'
+        if CheckVariable == "duration"
             if CheckRangeMIN <= ImpDurList(k) && ImpDurList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpDurList(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'peak frequency'
-            if CheckRangeMIN <= PFreqList(k) && PFreqList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = PFreqList(k);
+        elseif CheckVariable == "peak frequency"
+            if CheckRangeMIN <= PFreqList(k)/1000 && PFreqList(k)/1000 <= CheckRangeMAX
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'amplitude'
+        elseif CheckVariable == "amplitude"
             if CheckRangeMIN <= ImpAmpList(k) && ImpAmpList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpAmpList(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'energy'
+        elseif CheckVariable == "energy"
             if CheckRangeMIN <= ImpEnerList(k) && ImpEnerList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpEnerList(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'counts'
+        elseif CheckVariable == "counts"
             if CheckRangeMIN <= ImpCountList(k) && ImpCountList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpCountList(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'rise time'
+        elseif CheckVariable == "rise time"
             if CheckRangeMIN <= ImpRiseList(k) && ImpRiseList(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpRiseList(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
-        elseif CheckVariable == 'parametric 1'
+        elseif CheckVariable == "parametric 1"
             if CheckRangeMIN <= ImpPARA1(k) && ImpPARA1(k) <= CheckRangeMAX
-                CheckVariableTable(K) = ImpPARA1(k);
+                CheckVariableTable(end+1,:) = AllValues(k,:);
             end
         end
         

@@ -20,7 +20,7 @@ PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
 
-experimentNo = '1003'; %Specify which experiment to analyze
+experimentNo = '1001'; %Specify which experiment to analyze
 run Import_data.m
 
     %Input hardware calibrations
@@ -28,7 +28,7 @@ PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-Fs = 10*10^6; %Sample frequency (Hz)
+Fs = 5*10^6; %Sample frequency (Hz)
 
     %Input software parameters
 Total = length(ASCIIOutPut.data)/Fs;
@@ -59,9 +59,11 @@ DBminDur = 0; %[μs]
 DBminCount = 100;
 DBminRise = 0; %[s]
 
-CheckVariable = 'duration';
-CheckRangeMIN = 3000;
-CheckRangeMAX = 6000;
+CheckVariable = "peak frequency";
+%Varibles: "peak frequency", "amplitude", "duration", "energy",
+%          "counts," "rise time", "parametric 1"
+CheckRangeMIN = 200;
+CheckRangeMAX = 400;
 
 
 run Calculations.m
