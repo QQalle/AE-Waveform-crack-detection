@@ -1,65 +1,93 @@
 
+CheckAvgFreq = round(mean(CheckVariableTable.PeakFrequency));
+CheckAvgAmp = round(mean(CheckVariableTable.Amplitude));
+CheckAvgDur = round(mean(CheckVariableTable.Duration));
+CheckAvgEner = round(mean(CheckVariableTable.Energy));
+CheckAvgCount = round(mean(CheckVariableTable.Counts));
+CheckAvgRise = round(mean(CheckVariableTable.RiseTime));
+
+CheckSTDFreq = round(3*std(CheckVariableTable.PeakFrequency));
+CheckSTDAmp = round(3*std(CheckVariableTable.Amplitude));
+CheckSTDDur = round(3*std(CheckVariableTable.Duration));
+CheckSTDEner = round(3*std(CheckVariableTable.Energy));
+CheckSTDCount = round(3*std(CheckVariableTable.Counts));
+CheckSTDRise = round(3*std(CheckVariableTable.RiseTime));
+
+disp("CHECKED STATISTICS MEAN ± 3σ");
+disp("Avg peak frequency: " + num2str(CheckAvgFreq) + "kHz ± " + num2str(CheckSTDFreq)); 
+disp("Avg amplitude: " + num2str(CheckAvgAmp) + "dB ± " + num2str(CheckSTDAmp)); 
+disp("Avg duration: " + num2str(CheckAvgDur) + "μs ± " + num2str(CheckSTDDur)); 
+disp("Avg energy: " + num2str(CheckAvgEner) + "aJ ± " + num2str(CheckSTDEner)); 
+disp("Avg counts: " + num2str(CheckAvgCount) + " ± " + num2str(CheckSTDCount)); 
+disp("Avg rise time: " + num2str(CheckAvgRise) + "s ± " + num2str(CheckSTDRise)); 
+
+Stats = table();
+Stats(1,:) = table([CheckAvgFreq CheckSTDFreq],[CheckAvgAmp CheckSTDAmp],...
+    [CheckAvgDur CheckSTDDur],[CheckAvgEner CheckSTDEner],...
+    [CheckAvgCount CheckSTDCount],[CheckAvgRise CheckSTDRise]);
+
 if istable(Matrixcracks)
         %Compute statistics
-    MCAvgFreq = round(mean(Matrixcracks.PeakFrequency),1);
-    MCAvgAmp = round(mean(Matrixcracks.Amplitude),1);
-    MCAvgDur = round(mean(Matrixcracks.Duration),1);
-    MCAvgEner = round(mean(Matrixcracks.Energy),1);
+    MCAvgFreq = round(mean(Matrixcracks.PeakFrequency));
+    MCAvgAmp = round(mean(Matrixcracks.Amplitude));
+    MCAvgDur = round(mean(Matrixcracks.Duration));
+    MCAvgEner = round(mean(Matrixcracks.Energy));
+    MCAvgCount = round(mean(Matrixcracks.Counts));
+    MCAvgRise = round(mean(Matrixcracks.RiseTime));
 
-    MCDevFreq = max(Matrixcracks.PeakFrequency) - round(MCAvgFreq,1);
-    MCDevAmp = max(Matrixcracks.Amplitude) - round(MCAvgAmp,1);
-    MCDevDur = max(Matrixcracks.Duration) - round(MCAvgDur,1);
-    MCDevEner = max(Matrixcracks.Energy) - round(MCAvgEner,1);
+    MCSTDFreq = round(3*std(Matrixcracks.PeakFrequency));
+    MCSTDAmp = round(3*std(Matrixcracks.Amplitude));
+    MCSTDDur = round(3*std(Matrixcracks.Duration));
+    MCSTDEner = round(3*std(Matrixcracks.Energy));
+    MCSTDCount = round(3*std(Matrixcracks.Counts));
+    MCSTDRise = round(3*std(Matrixcracks.RiseTime));
     
-    disp("MATRIX CRACK STATISTICS");
-    disp("Avg peak frequency: " + num2str(MCAvgFreq) + "kHz ± " + num2str(MCDevFreq)); 
-    disp("Avg amplitude: " + num2str(MCAvgAmp) + "dB ± " + num2str(MCDevAmp)); 
-    disp("Avg duration: " + num2str(MCAvgDur) + "μs ± " + num2str(MCDevDur)); 
-    disp("Avg energy: " + num2str(MCAvgEner) + "aJ ± " + num2str(MCDevEner)); 
+    disp("MATRIX CRACK STATISTICS MEAN ± 3σ");
+    disp("Avg peak frequency: " + num2str(MCAvgFreq) + "kHz ± " + num2str(MCSTDFreq)); 
+    disp("Avg amplitude: " + num2str(MCAvgAmp) + "dB ± " + num2str(MCSTDAmp)); 
+    disp("Avg duration: " + num2str(MCAvgDur) + "μs ± " + num2str(MCSTDDur)); 
+    disp("Avg energy: " + num2str(MCAvgEner) + "aJ ± " + num2str(MCSTDEner)); 
+    
+    Stats(end+1,:) = table([MCAvgFreq MCSTDFreq],[MCAvgAmp MCSTDAmp],...
+    [MCAvgDur MCSTDDur],[MCAvgEner MCSTDEner],...
+    [MCAvgCount MCSTDCount],[MCSTDRise MCSTDRise]);
 end
 if istable(Debondings)
-    DBAvgFreq = round(mean(Debondings.PeakFrequency),1);
-    DBAvgAmp = round(mean(Debondings.Amplitude),1);
-    DBAvgDur = round(mean(Debondings.Duration),1);
-    DBAvgEner = round(mean(Debondings.Energy),1);
+    DBAvgFreq = round(mean(Debondings.PeakFrequency));
+    DBAvgAmp = round(mean(Debondings.Amplitude));
+    DBAvgDur = round(mean(Debondings.Duration));
+    DBAvgEner = round(mean(Debondings.Energy));
+    DBAvgCount = round(mean(Debondings.Counts));
+    DBAvgRise = round(mean(Debondings.RiseTime));
     
-    DBDevFreq = max(Debondings.PeakFrequency) - round(DBAvgFreq,1);
-    DBDevAmp = max(Debondings.Amplitude) - round(DBAvgAmp,1);
-    DBDevDur = max(Debondings.Duration) - round(DBAvgDur,1);
-    DBDevEner = max(Debondings.Energy) - round(DBAvgEner,1);
+    DBSTDFreq = round(3*std(Debondings.PeakFrequency));
+    DBSTDAmp = round(3*std(Debondings.Amplitude));
+    DBSTDDur = round(3*std(Debondings.Duration));
+    DBSTDEner = round(3*std(Debondings.Energy));
+    DBSTDCount = round(3*std(Debondings.Counts));
+    DBSTDRise = round(3*std(Debondings.RiseTime));
     
-    disp("DEBONDING STATISTICS");
-    disp("Avg peak frequency: " + num2str(DBAvgFreq) + "kHz ± " + num2str(DBDevFreq)); 
-    disp("Avg amplitude: " + num2str(DBAvgAmp) + "dB ± " + num2str(DBDevAmp)); 
-    disp("Avg duration: " + num2str(DBAvgDur) + "μs ± " + num2str(DBDevDur)); 
-    disp("Avg energy: " + num2str(DBAvgEner) + "aJ ± " + num2str(DBDevEner)); 
+    disp("DEBONDING STATISTICS MEAN ± 3σ");
+    disp("Avg peak frequency: " + num2str(DBAvgFreq) + "kHz ± " + num2str(DBSTDFreq)); 
+    disp("Avg amplitude: " + num2str(DBAvgAmp) + "dB ± " + num2str(DBSTDAmp)); 
+    disp("Avg duration: " + num2str(DBAvgDur) + "μs ± " + num2str(DBSTDDur)); 
+    disp("Avg energy: " + num2str(DBAvgEner) + "aJ ± " + num2str(DBSTDEner)); 
+    
+    Stats(end+1,:) = table([DBAvgFreq DBSTDFreq],[DBAvgAmp DBSTDAmp],...
+    [DBAvgDur DBSTDDur],[DBAvgEner DBSTDEner],...
+    [DBAvgCount DBSTDCount],[DBSTDRise DBSTDRise]);
 end
+Stats.Properties.VariableNames = {'MEAN | Frequency | 3σ' 'Amplitude' 'Duration'...
+    'Energy' 'Counts' 'Rise time'};
 
-CheckAvgFreq = round(mean(CheckVariableTable.PeakFrequency),1);
-CheckAvgAmp = round(mean(CheckVariableTable.Amplitude),1);
-CheckAvgDur = round(mean(CheckVariableTable.Duration),1);
-CheckAvgEner = round(mean(CheckVariableTable.Energy),1);
-CheckAvgCount = round(mean(CheckVariableTable.Counts),1);
-CheckAvgRise = round(mean(CheckVariableTable.RiseTime),1);
-
-CheckDevFreq = max(CheckVariableTable.PeakFrequency)...
-    - round(CheckAvgFreq,1);
-CheckDevAmp = max(CheckVariableTable.Amplitude)...
-    - round(CheckAvgAmp,1);
-CheckDevDur = max(CheckVariableTable.Duration)...
-    - round(CheckAvgDur,1);
-CheckDevEner = max(CheckVariableTable.Energy)...
-    - round(CheckAvgEner,1);
-CheckDevCount = max(CheckVariableTable.Counts)...
-    - round(CheckAvgCount,1);
-CheckDevRise = max(CheckVariableTable.RiseTime)...
-    - round(CheckAvgRise,1);
-
-disp("CHECKED STATISTICS");
-disp("Avg peak frequency: " + num2str(CheckAvgFreq) + "kHz ± " + num2str(CheckDevFreq)); 
-disp("Avg amplitude: " + num2str(CheckAvgAmp) + "dB ± " + num2str(CheckDevAmp)); 
-disp("Avg duration: " + num2str(CheckAvgDur) + "μs ± " + num2str(CheckDevDur)); 
-disp("Avg energy: " + num2str(CheckAvgEner) + "aJ ± " + num2str(CheckDevEner)); 
-disp("Avg counts: " + num2str(CheckAvgCount) + " ± " + num2str(CheckDevCount)); 
-disp("Avg rise time: " + num2str(CheckAvgRise) + "s ± " + num2str(CheckDevRise)); 
-
+if istable(Matrixcracks) %Check what rows to name
+    if istable(Debondings)
+        Stats.Properties.RowNames = {'Check' 'Matrix cracks' 'Debondings'};
+    else
+        Stats.Properties.RowNames = {'Check' 'Matrix cracks'};
+    end
+elseif istable(Debondings)
+    Stats.Properties.RowNames = {'Check' 'Debondings'};
+else
+    Stats.Properties.RowNames = {'Check'};
+end

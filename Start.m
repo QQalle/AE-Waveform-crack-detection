@@ -38,14 +38,14 @@ ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
-MCminFreq = 75*10^3; %[Hz]
-MCmaxFreq = 180*10^3; %[Hz]
-MCminAmp = 60; %[dB]
+MCminFreq = 0*10^3; %[Hz]
+MCmaxFreq = 300*10^3; %[Hz]
+MCminAmp = 98; %[dB]
 MCmaxAmp = 99; %[dB]
 MCminEner = 0; %[kJ]
-MCmaxEner = 10^12; %[aJ]
-MCminDur = 1500; %[μs]
-MCminCount = 100;
+MCmaxEner = 10^14; %[aJ]
+MCminDur = 0; %[μs]
+MCminCount = 50;
 MCminRise = 0; %[s]
 
     %Calibrate debonding definition
@@ -62,8 +62,8 @@ DBminRise = 0; %[s]
 CheckVariable = "peak frequency";
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
-CheckRangeMIN = 500;
-CheckRangeMAX = 600;
+CheckRangeMIN = 250;
+CheckRangeMAX = 400;
 
 
 run Calculations.m
