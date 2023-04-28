@@ -20,7 +20,7 @@ PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
 
-experimentNo = '1001'; %Specify which experiment to analyze
+experimentNo = '1002'; %Specify which experiment to analyze
 run Import_data.m
 
     %Input hardware calibrations
@@ -62,9 +62,11 @@ DBminRise = 0; %[s]
 CheckVariable = "peak frequency";
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
-CheckRangeMIN = 200;
-CheckRangeMAX = 400;
+CheckRangeMIN = 500;
+CheckRangeMAX = 600;
 
 
 run Calculations.m
 run Plots.m
+run Statistics.m
+disp('Done.');
