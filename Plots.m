@@ -81,6 +81,7 @@ end
 patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
     [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
     'EdgeColor','r');
+
 hold off
 
 figure('name', 'Hitcounter')
@@ -122,6 +123,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(time, MCSpreadHits,'r');
 end
 legend("Hits","Debondings","Matrix cracks",'location','south outside');
+plot(HitTimeList, CheckVariableList,'*');
 hold off
 
 figure('name', 'Total Accumulated Acoustic Energy')
@@ -200,7 +202,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PeakFrequency, Matrixcracks.Energy, 'o');
 end
 hold off
-
+%%
 figure('name', 'Duration vs Time')
 hold on
 scatter(HitTimeList, HAFImpDurList, 60, '.');
@@ -213,8 +215,9 @@ refl.Color = 'r';
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.Duration, 'o');
 end
+plot(HitTimeList, CheckVariableList,'*');
 hold off
-
+%%
 figure('name', 'Energy vs Time')
 hold on
 scatter(HitTimeList, HAFImpEnerList, 60, '.');

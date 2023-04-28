@@ -59,5 +59,10 @@ DBminDur = 0; %[μs]
 DBminCount = 100;
 DBminRise = 0; %[s]
 
+CheckVariable = 'duration';
+CheckRangeMIN = 3000;
+CheckRangeMAX = 6000;
+
+
 run Calculations.m
 run Plots.m

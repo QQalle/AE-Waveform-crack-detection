@@ -45,6 +45,7 @@ while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
     PARAStart = PARAStart + 1;
 end
 
+CheckVariableTable = array2table(NaN(HighestIndex,1));
 AMPList = [];
 PFreqList = [];
 HitTimeList = [];
@@ -63,6 +64,7 @@ BinFFT = zeros(1,HighestIndex);
 HighAmpFilterHits = 0;
 K = 0;
 LongDur = 0;
+AllValues = table()
 for k = 1 : HighestIndex
     K = K + 1;
         %Find file
@@ -152,6 +154,16 @@ for k = 1 : HighestIndex
         HAFImpDurList(K) = ImpDurList(k);
         HAFImpEnerList(K) = ImpEnerList(k);
         HAFImpPARA1(K) = ImpPARA1(k);
+            %Collect all values to a table
+        Duration = ImpDurList(k);
+        Energy = ImpEnerList(k);
+        Amplitude = ImpAmpList(k);
+        PeakFrequency = PFreq/1000;
+        Load = ImpPARA1(k);
+        Counts = ImpCountList(k);
+        RiseTime = ImpRiseList(k);
+        AllValues(K,:) = table(HitIndex,HitTime,PeakFrequency,Amplitude,...
+            Duration,Energy,Load,Counts,RiseTime);
             %Define matrix crack
         if MCminFreq <= PFreq && PFreq <= MCmaxFreq
             if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
@@ -176,23 +188,13 @@ for k = 1 : HighestIndex
                                     SaVals = (0:N-1)/L;
                                     SaPFreq = PFreq;
                                 end
-                                Duration = ImpDurList(k);
-                                Energy = ImpEnerList(k);
-                                Amplitude = ImpAmpList(k);
-                                PeakFrequency = PFreq/1000;
-                                Load = ImpPARA1(k);
-                                Counts = ImpCountList(k);
-                                RiseTime = ImpRiseList(k);
-                                Matrixcracks(MCc,:) = table(HitIndex,HitTime,...
-                                    PeakFrequency,Amplitude,Duration,Energy,...
-                                    Load,Counts,RiseTime);
+                                  Matrixcracks(MCc,:) = AllValues(k,:);
                             end
                         end
                     end
                 end
             end
         end
-
             %Define debonding
         if DBminFreq <= PFreq && PFreq <= DBmaxFreq
             if DBminAmp <= ImpAmpList(k) && ImpAmpList(k) <= DBmaxAmp
@@ -204,22 +206,46 @@ for k = 1 : HighestIndex
                                 if DBc == 1
                                     Debondings = table(); %Make table first time
                                 end
-                                Duration = ImpDurList(k);
-                                Energy = ImpEnerList(k);
-                                Amplitude = ImpAmpList(k);
-                                PeakFrequency = PFreq/1000;
-                                Load = ImpPARA1;
-                                Counts = ImpCountList(k);
-                                RiseTime = ImpRiseList(k);
-                                Debondings(DBc,:) = table(HitIndex,HitTime,...
-                                    PeakFrequency,Amplitude,Duration,Energy,...
-                                    Load,Counts,RiseTime);
+                                Debondings(DBc,:) = AllValues(k,:);
                             end
                         end
                     end
                 end
             end
         end
+
+        
+            %Check variable
+        if CheckVariable == 'duration'
+            if CheckRangeMIN <= ImpDurList(k) && ImpDurList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpDurList(k);
+            end
+        elseif CheckVariable == 'peak frequency'
+            if CheckRangeMIN <= PFreqList(k) && PFreqList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = PFreqList(k);
+            end
+        elseif CheckVariable == 'amplitude'
+            if CheckRangeMIN <= ImpAmpList(k) && ImpAmpList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpAmpList(k);
+            end
+        elseif CheckVariable == 'energy'
+            if CheckRangeMIN <= ImpEnerList(k) && ImpEnerList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpEnerList(k);
+            end
+        elseif CheckVariable == 'counts'
+            if CheckRangeMIN <= ImpCountList(k) && ImpCountList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpCountList(k);
+            end
+        elseif CheckVariable == 'rise time'
+            if CheckRangeMIN <= ImpRiseList(k) && ImpRiseList(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpRiseList(k);
+            end
+        elseif CheckVariable == 'parametric 1'
+            if CheckRangeMIN <= ImpPARA1(k) && ImpPARA1(k) <= CheckRangeMAX
+                CheckVariableTable(K) = ImpPARA1(k);
+            end
+        end
+        
     else
         K = K-1;
     end
