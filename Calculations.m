@@ -62,6 +62,7 @@ SumFFT = zeros(1,HighestIndex);
 BinFFT = zeros(1,HighestIndex);
 HighAmpFilterHits = 0;
 K = 0;
+LongDur = 0;
 for k = 1 : HighestIndex
     K = K + 1;
         %Find file
@@ -78,6 +79,7 @@ for k = 1 : HighestIndex
         FiltSignal = Signal(round(PT*Fs):round((PT+ImpDurList(k)*10^-6)*Fs));
     else
         FiltSignal = Signal(round(PT*Fs):N);
+        LongDur = LongDur + 1;
     end
     Nf = length(FiltSignal); %number of filtered samples
     Lf = Nf/Fs; %Total time of filtered waveform (s)
@@ -196,18 +198,24 @@ for k = 1 : HighestIndex
             if DBminAmp <= ImpAmpList(k) && ImpAmpList(k) <= DBmaxAmp
                 if DBminEner <= ImpEnerList(k) && ImpEnerList(k) <= DBmaxEner
                     if DBminDur <= ImpDurList(k)
-                        DBc = DBc + 1;
-                        if DBc == 1
-                            Debondings = table(); %Make table first time
+                        if DBminCount <= ImpCountList(k)
+                            if DBminRise <= ImpRiseList(k)
+                                DBc = DBc + 1;
+                                if DBc == 1
+                                    Debondings = table(); %Make table first time
+                                end
+                                Duration = ImpDurList(k);
+                                Energy = ImpEnerList(k);
+                                Amplitude = ImpAmpList(k);
+                                PeakFrequency = PFreq/1000;
+                                Load = ImpPARA1;
+                                Counts = ImpCountList(k);
+                                RiseTime = ImpRiseList(k);
+                                Debondings(DBc,:) = table(HitIndex,HitTime,...
+                                    PeakFrequency,Amplitude,Duration,Energy,...
+                                    Load,Counts,RiseTime);
+                            end
                         end
-                        Duration = ImpDurList(k);
-                        Energy = ImpEnerList(k);
-                        Amplitude = ImpAmpList(k);
-                        PeakFrequency = PFreq/1000;
-                        Load = ImpPARA1;
-                        Debondings(DBc,:) = table(HitIndex,HitTime,...
-                            PeakFrequency,Amplitude,Duration,Energy,...
-                            Load);
                     end
                 end
             end
@@ -255,4 +263,11 @@ if istable(Debondings)
         + num2str(length(Debondings.HitIndex)));
 else
     disp("No debondings found");
+end
+if LongDur/HighestIndex >= 0.05 %5% data loss by too long duration
+    disp(num2str(LongDur)...
+    +" waveforms had too long duration, consider increasing data collection time.");
+else
+    disp(num2str(LongDur)...
+    +" waveforms had too long duration");
 end

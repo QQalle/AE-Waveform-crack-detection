@@ -34,7 +34,7 @@ end
 
 figure('name', 'Spectrogram', 'Position',[100 100 1000 500]); 
 tiledlayout(2,1);
-nexttile %Spectogram
+nexttile %Spectrogram
 image([0 HighestIndex], [0 1*10^6], FFTMat);
 title('Spectrogram');
 cb = colorbar;
