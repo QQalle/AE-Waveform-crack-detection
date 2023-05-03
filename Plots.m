@@ -291,8 +291,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
-%%
-close all
+
 figure('name', 'Amplitude-Frequency Stacked')
 hold on
 Spreadf = cell(1,ceil(max(PFreqList./1000)));
