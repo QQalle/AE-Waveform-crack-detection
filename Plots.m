@@ -1,3 +1,4 @@
+close all
 if istable(Matrixcracks) %Sample waveforms
     disp("Matrix cracks found:"...
         + num2str(length(Matrixcracks.HitIndex)));
@@ -290,3 +291,35 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
+%%
+close all
+figure('name', 'Amplitude-Frequency Stacked')
+hold on
+Spreadf = cell(1,ceil(max(PFreqList./1000)));
+Spreadf2 = [];
+for i = 1 : length(PFreqList)
+    Spreadf{1,ceil(PFreqList(i)./1000)} = ...
+        [Spreadf{1,ceil(PFreqList(i)./1000)};i];
+end
+Spreadf = Spreadf(1,1:1000); %Cap the frequency to 1MHz
+for i = 1 : length(Spreadf)
+    len = length(Spreadf{1,i});
+    if len ~= 0
+        if len == 1
+            Spreadf2(1,i) = 1;
+        else
+            Spreadf2(1:len,i) = Spreadf{1,i};
+        end
+    end
+end
+imagesc(Spreadf2);
+colorbar;
+shading interp
+mycolormap = colormap(hsv);
+% mycolormap(1, :) = [1,1,1]; %White background
+mycolormap(1, :) = [0, 0, 0]; %Black background
+colormap(mycolormap);
+title('Frequency vs Stacked hits');
+xlabel('Peak frequency [kHz]');
+ylabel('Hits');
+disp('worked')
