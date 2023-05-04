@@ -40,7 +40,6 @@ RiseIndex = find(contains(ASCIIOutPut.textdata, 'RISE'));
 ImpRiseList = transpose(ASCIIOutPut.data(:,RiseIndex));
 ImpRiseList = ImpRiseList(1:HighestIndex);
 
-%This is for syncing the AEwin recording to tensile test recording
 PARAStart = 1;
 while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
     PARAStart = PARAStart + 1;
@@ -107,6 +106,7 @@ for k = 1 : HighestIndex
         DerivEner2 = TimeVector;
         DerivEner3 = TimeVector;
         FunTime = TimeVector;
+        
     end
     TimeIndex = round(HitTime*Resolution);
 
@@ -167,6 +167,8 @@ for k = 1 : HighestIndex
         RiseTime = ImpRiseList(k);
         AllValues(K,:) = table(HitIndex,HitTime,PeakFrequency,Amplitude,...
             Duration,Energy,Load,Counts,RiseTime);
+        CurrentStrain = 
+            %Define matrix crack
         if MCminFreq <= PFreq && PFreq <= MCmaxFreq
             if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
                 if MCminEner <= ImpEnerList(k) && ImpEnerList(k) <= MCmaxEner
@@ -258,19 +260,6 @@ if width(CheckVariableTable) == 0
         AllValues.Properties.VariableNames;
 end
 
-    %CSVDATA COMPILATION
-time2 = (0:length(TimeVector)-1);
-TestStart = HitTimeList(PARAStart);
-CSVData.Fun_Time = CSVData.Fun_Time + TestStart;
-CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
-    'VariableNames',CSVData.Properties.VariableNames);
-CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
-for i = 1 : length(CSVData.Fun_Time)
-    t = round(CSVData.Fun_Time(i),1)+1;
-    index = t*Resolution;
-    CSVDataOffs(index,2:end) = CSVData(i,2:end);
-end
-CSVDataOffs = fillmissing(CSVDataOffs,"next");  
 PullStop = CSVData.Fun_Time(end) + TestStart; %(s) When tensile test ends (stops pulling)
 disp("Tensile test end =" + num2str(PullStop) + "s");
 
@@ -278,10 +267,6 @@ disp("Tensile test end =" + num2str(PullStop) + "s");
 MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStrain*100) == MCstr, 1);
 %Time of x% strain
 MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
-
-    %Remove MC under x% strain
-x = find(Matrixcracks.HitTime < MCstrboundtime, 1, 'last' );
-Matrixcracks(1:x,:) = [];
 
 if ApplyHAF == true
     disp("HAF enabled");

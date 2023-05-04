@@ -20,8 +20,9 @@ PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
 
-experimentNo = '1002'; %Specify which experiment to analyze
+experimentNo = '1001'; %Specify which experiment to analyze
 run Import_data.m
+
 
     %Input hardware calibrations
 PT = 20*10^-6; %Pre-trigger
@@ -40,13 +41,14 @@ HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
     %Calibrate matrix crack definition
 MCminFreq = 0*10^3; %[Hz]
 MCmaxFreq = 300*10^3; %[Hz]
-MCminAmp = 98; %[dB]
+MCminAmp = 0; %[dB]
 MCmaxAmp = 99; %[dB]
 MCminEner = 0; %[kJ]
 MCmaxEner = 10^14; %[aJ]
 MCminDur = 0; %[μs]
 MCminCount = 50;
 MCminRise = 0; %[s]
+MCstr = 3; % [%] What is expected start strain for matrix cracks
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]

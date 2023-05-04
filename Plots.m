@@ -291,14 +291,14 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
-
+%%
 figure('name', 'Amplitude-Frequency Stacked')
 hold on
 Spreadf = cell(1,ceil(max(PFreqList./1000)));
 Spreadf2 = [];
 for i = 1 : length(PFreqList)
     Spreadf{1,ceil(PFreqList(i)./1000)} = ...
-        [Spreadf{1,ceil(PFreqList(i)./1000)};i];
+        [Spreadf{1,ceil(PFreqList(i)./1000)};i*TimeEnd/HighestIndex];
 end
 Spreadf = Spreadf(1,1:1000); %Cap the frequency to 1MHz
 for i = 1 : length(Spreadf)
@@ -312,11 +312,14 @@ for i = 1 : length(Spreadf)
     end
 end
 imagesc(Spreadf2);
-colorbar;
+cc = colorbar;
+title(cc,'Time [s]')
 shading interp
 mycolormap = colormap(hsv);
 % mycolormap(1, :) = [1,1,1]; %White background
 mycolormap(1, :) = [0, 0, 0]; %Black background
+bound = MCstrboundtime*height(mycolormap)/80;
+mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Black background
 colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
