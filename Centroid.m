@@ -48,7 +48,7 @@ Centroids = cellfun(@(F) (spectralCentroid(abs(F(Iv))*2, Fv)), FFTs, 'UniformOut
 disp("Centroids Done!");
 
 % plot(cell2mat(Centroids));
-waterfall(abs(FFTs{1}))
+% waterfall(abs(FFTs{1}))
 
 
 
