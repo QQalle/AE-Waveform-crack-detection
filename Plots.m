@@ -86,6 +86,7 @@ plot(CheckVariableTable.PeakFrequency, CheckVariableTable.Amplitude,'*');
 hold off
 
 figure('name', 'Hitcounter')
+disp("Spreading hits...")
 hold on
 %time = (0:ceil(max(HitTimeList)));
 time = (0:TimeEnd);
@@ -126,14 +127,14 @@ end
 legend("Hits","Debondings","Matrix cracks",'location','south outside');
 hold off
 
-figure('name', 'Total Accumulated Acoustic Energy')
+figure('name', 'Total Cumulative Acoustic Energy','Position',[1,1,1500,800])
 hold on
 plot(time2/Resolution, SpreadEner);
 % FOR POLYNOMIAL % 
 % p = polyfit(time2/Resolution,SpreadEner,20);
 % pol = polyval(p, time2/Resolution);
 % plot(time2/Resolution, pol,'--');
-title('Accumulated Acoustic Energy');
+title('Cumulative Acoustic Energy');
 xlim([0 TimeEnd]);
 %ylim([0 max(SpreadEner)+2]);
 xlabel('Time [s]');
@@ -146,7 +147,8 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
 
-figure('name', 'Energy-time derivative')
+figure('name', 'Energy-time derivative','Position',[1,1,1500,800])
+disp("calculating Energy-time derivative...")
 hold on
 plot(time2/Resolution, DerivEner);
 % plot(time2/Resolution, DerivEner1,'--');
@@ -155,12 +157,12 @@ plot(time2/Resolution, DerivEner);
 title('Energy Derivative vs Time');
 xlabel('Time [s]');
 ylabel('Energy derivative');
-if istable(Matrixcracks) %If true = there are matrixcracks
-    for i = 1 : length(Matrixcracks.HitTime)
-        xli = xline(Matrixcracks.HitTime(i));
-        xli.Color = [1 0 0];
-    end
-end
+% if istable(Matrixcracks) %If true = there are matrixcracks
+%     for i = 1 : length(Matrixcracks.HitTime)
+%         xli = xline(Matrixcracks.HitTime(i));
+%         xli.Color = [1 0 0];
+%     end
+% end
 hold off
 
 figure('name', 'Frequency vs Time vs Amplitude')
@@ -235,12 +237,12 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.Energy,'*');
 hold off
 
-figure('name','Amplitude vs Load')
+figure('name','Amplitude vs Parameter 1')
 hold on
 scatter(HAFImpPARA1, HAFImpAmpList, 60, '.');
-title('Amplitude vs Load');
+title('Amplitude vs Parameter 1');
 ylim([floor(min(HAFImpAmpList))*0.9 ceil(max(HAFImpAmpList))*1.1]);
-xlabel('Load [ ]');
+xlabel('PARA1 [?]');
 ylabel("Amplitude [dB]");
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.Load, Matrixcracks.Amplitude, 'o');
@@ -291,11 +293,11 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
-%%
-close all
-figure('name', 'Frequency vs Stacked hits','Position',[100 100 1400 700])
+
+figure('name', 'Frequency vs Stacked hits','Position',[1,1,1400,800])
+disp("Stacking hits...");
 hold on
-multiplier = 4;
+multiplier = 1;
 Spreadf = cell(1,multiplier*ceil(max(PFreqList./1000)));
 Spreadf2 = [];
 for i = 1 : length(PFreqList)
@@ -322,9 +324,9 @@ mycolormap = colormap(hsv);
 % mycolormap(1, :) = [1,1,1]; %White background
 mycolormap(1, :) = [0, 0, 0]; %Black background
 bound = MCstrboundtime*height(mycolormap)/80;
-mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Black background
+% mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Reduced lower values
 colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
 ylabel('Hits');
-disp('it worked')
+disp('it worked! =)')
