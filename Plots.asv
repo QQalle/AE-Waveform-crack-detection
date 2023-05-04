@@ -292,15 +292,16 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
 %%
-figure('name', 'Amplitude-Frequency Stacked')
+figure('name', 'Frequency vs Stacked hits')
 hold on
-Spreadf = cell(1,ceil(max(PFreqList./1000)));
+multiplier = 10;
+Spreadf = cell(1,multiplier*ceil(max(PFreqList./1000)));
 Spreadf2 = [];
 for i = 1 : length(PFreqList)
-    Spreadf{1,ceil(PFreqList(i)./1000)} = ...
+    Spreadf{1,PFreqList(i)./1000,2} = ...
         [Spreadf{1,ceil(PFreqList(i)./1000)};i*TimeEnd/HighestIndex];
 end
-Spreadf = Spreadf(1,1:1000); %Cap the frequency to 1MHz
+Spreadf = Spreadf(1,1:(1000*multiplier)); %Cap the frequency to 1MHz
 for i = 1 : length(Spreadf)
     len = length(Spreadf{1,i});
     if len ~= 0
@@ -317,11 +318,11 @@ title(cc,'Time [s]')
 shading interp
 mycolormap = colormap(hsv);
 % mycolormap(1, :) = [1,1,1]; %White background
-% mycolormap(1, :) = [0, 0, 0]; %Black background
-% bound = 96;
-mycolormap(1:MCstrboundtime, :) = zeros(MCstrboundindex2, 3); %Black background
+mycolormap(1, :) = [0, 0, 0]; %Black background
+bound = MCstrboundtime*height(mycolormap)/80;
+mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Black background
 colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
 ylabel('Hits');
-disp('worked')
+disp('it worked')

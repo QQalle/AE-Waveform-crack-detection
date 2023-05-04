@@ -81,6 +81,6 @@ if istable(Debondings)
     Stats(end+1,:) = table([DBAvgFreq DBSTDFreq],[DBAvgAmp DBSTDAmp],...
     [DBAvgDur DBSTDDur],[DBAvgEner DBSTDEner],...
     [DBAvgCount DBSTDCount],[DBSTDRise DBSTDRise]);
-    Stats.Properties.RowNames(end+1) = "Debondings";
+    Stats.Properties.RowNames(end) = "Debondings";
 end
 
