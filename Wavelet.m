@@ -1,7 +1,7 @@
 close all
 clear
 
-experimentNo = '1003'; %Specify which experiment to analize
+experimentNo = '2003'; %Specify which experiment to analize
 ASCIIOutPut = importdata(append('Data/EXP', experimentNo, '.txt'));
 ASCIIWaveforms = append('Data/EXP', experimentNo);
 
@@ -45,15 +45,16 @@ maxAmp = [];
 maxInd = [];
 maxCol = [];
 maxFreq = [];
+pointColor = [];
 for j = 1:length(Signals)
     [maxAmp(j), indtemp] = max(wt{j}, [], "all");
     [maxInd(j), maxCol(j)] = ind2sub(size(wt{j}), indtemp);
     maxFreq(j) = f{j}(maxInd(j));
 end
 
-plot3(maxFreq, maxCol, abs(maxAmp), ".");
+scatter3(maxFreq, maxCol, abs(maxAmp), 30, 1:numel(maxFreq), 'filled');
 xlabel("Freq.");
-ylabel("index");
+ylabel("internal index");
 zlabel("Amp.");
 
 
