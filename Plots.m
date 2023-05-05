@@ -2,7 +2,7 @@ close all
 if istable(Matrixcracks) %Sample waveforms
     disp("Matrix cracks found:"...
         + num2str(length(Matrixcracks.HitIndex)));
-    figure('name', 'Sample Waveform') %Waveform
+    figure('name', 'Sample Waveform','Position',[60,60,1400,700]) %Waveform
     plot(SaVals*L/Fs*10^6, SaSignal);
     title('Sample Waveform');
     xlabel('Time [μs]');
@@ -14,7 +14,7 @@ if istable(Matrixcracks) %Sample waveforms
     xlim([0 max(SaVals*L/Fs*10^6)]);
     %ylim([-ceil(max(FiltSignal)), ceil(max(FiltSignal))]);
 
-    figure('name', 'Power spectrum') %Power spectrum
+    figure('name', 'Power spectrum','Position',[60,60,1400,700]) %Power spectrum
     plot(SafVals(1:round(SaNf/2+1)), Sapower);
     xlim([0 10^6]);
     title('Sample Power spectrum');
@@ -22,7 +22,7 @@ if istable(Matrixcracks) %Sample waveforms
     ylabel('Amplitude [dB]');
     example = 'example_string_123';
     
-    figure('name', 'FFT', 'Position',[100 100 1000 500]) %FFT
+    figure('name', 'FFT','Position',[60,60,1400,700]) %FFT
     area(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
     title('Sample FFT');
     xlim([0 10^6]);
@@ -58,7 +58,7 @@ annotation('textbox', [0.79 0.393 0.8 0.1], ...
     'FontWeight', 'bold', ...
     'EdgeColor', 'none')
 
-figure('name', 'Amplitude-Frequency')
+figure('name', 'Amplitude-Frequency','Position',[60,60,1400,700])
 hold on
 plot(PFreqList./1000, HAFImpAmpList, '.');
 xlim([floor(min(PFreqList./1000)/10)*10 ...
@@ -85,7 +85,7 @@ patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
 plot(CheckVariableTable.PeakFrequency, CheckVariableTable.Amplitude,'*');
 hold off
 
-figure('name', 'Hitcounter')
+figure('name', 'Hitcounter','Position',[60,60,1400,700])
 disp("Spreading hits...")
 hold on
 %time = (0:ceil(max(HitTimeList)));
@@ -127,7 +127,7 @@ end
 legend("Hits","Debondings","Matrix cracks",'location','south outside');
 hold off
 
-figure('name', 'Total Cumulative Acoustic Energy','Position',[1,1,1500,800])
+figure('name', 'Total Cumulative Acoustic Energy','Position',[60,60,1400,700])
 hold on
 plot(time2/Resolution, SpreadEner);
 % FOR POLYNOMIAL % 
@@ -147,7 +147,7 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
 
-figure('name', 'Energy-time derivative','Position',[1,1,1500,800])
+figure('name', 'Energy-time derivative','Position',[60,60,1400,700])
 disp("calculating Energy-time derivative...")
 hold on
 plot(time2/Resolution, DerivEner);
@@ -165,7 +165,7 @@ ylabel('Energy derivative');
 % end
 hold off
 
-figure('name', 'Frequency vs Time vs Amplitude')
+figure('name', 'Frequency vs Time vs Amplitude','Position',[60,60,1400,700])
 hold on
 PeakFrequencyList = PFreqList/1000;
 tbl = table(HitTimeList,PeakFrequencyList,HAFImpAmpList);
@@ -187,7 +187,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-figure('name', 'Energy-Frequency Spectrum')
+figure('name', 'Energy-Frequency Spectrum','Position',[60,60,1400,700])
 hold on
 plot((1:length(StackEner)),StackEner);
 xlim([0 1000]); 
@@ -205,7 +205,7 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-figure('name', 'Duration vs Time')
+figure('name', 'Duration vs Time','Position',[60,60,1400,700])
 hold on
 scatter(HitTimeList, HAFImpDurList, 60, '.');
 title('Duration');
@@ -222,7 +222,7 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.Duration,'*');
 hold off
 
-figure('name', 'Energy vs Time')
+figure('name', 'Energy vs Time','Position',[60,60,1400,700])
 hold on
 scatter(HitTimeList, HAFImpEnerList, 60, '.');
 title('Energy vs time');
@@ -237,7 +237,7 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.Energy,'*');
 hold off
 
-figure('name','Amplitude vs Parameter 1')
+figure('name','Amplitude vs Parameter 1','Position',[60,60,1400,700])
 hold on
 scatter(HAFImpPARA1, HAFImpAmpList, 60, '.');
 title('Amplitude vs Parameter 1');
@@ -249,28 +249,28 @@ if istable(Matrixcracks) %If true = there are matrixcracks
 end
 hold off
 
-figure('name', 'Load vs Time')
+figure('name', 'Load vs Time','Position',[60,60,1400,700])
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
 title('Load vs Time');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Load [N]');
 
-figure('name', 'Stress vs Time')
+figure('name', 'Stress vs Time','Position',[60,60,1400,700])
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStress)
 title('Stress vs Time');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Stress [MPa]');
 
-figure('name', 'Strain vs Time')
+figure('name', 'Strain vs Time','Position',[60,60,1400,700])
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
 title('Strain vs Time');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
 ylabel('Strain [%]');
 
-figure('name', 'Counts vs Time');
+figure('name', 'Counts vs Time','Position',[60,60,1400,700]);
 hold on
 scatter(HitTimeList, HAFImpCountList,'.');
 title('Counts vs Time');
@@ -282,7 +282,7 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.Counts,'*');
 hold off
 
-figure('name','Rise time vs time')
+figure('name','Rise time vs time','Position',[60,60,1400,700])
 hold on
 scatter(HitTimeList, HAFImpRiseList, '.');
 title('Rise time vs time');
@@ -294,7 +294,7 @@ end
 plot(CheckVariableTable.HitTime, CheckVariableTable.RiseTime,'*');
 hold off
 
-figure('name', 'Frequency vs Stacked hits','Position',[1,1,1400,800])
+figure('name', 'Frequency vs Stacked hits','Position',[60,60,1400,700])
 disp("Stacking hits...");
 hold on
 multiplier = 1;
