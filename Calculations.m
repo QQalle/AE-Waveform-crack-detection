@@ -115,6 +115,7 @@ for k = 1 : HighestIndex
     FFTf = fft(FiltSignal); %Fast Fourier Transform
     FFT = fft(Signal);
     FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
+
     for p = 1 : N
         SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
     end
@@ -264,7 +265,7 @@ end
 
     %CSVDATA COMPILATION
 time2 = (0:length(TimeVector)-1);
-TimeOffs = HitTimeList(PARAOffset);
+%TimeOffs = HitTimeList(PARAOffset);
 TimeOffs = 0;
 % CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
