@@ -116,6 +116,10 @@ for k = 1 : HighestIndex
     FFT = fft(Signal);
     FFTMat(:,end+1) = abs(FFT(1:round(N/10))); %N for 10MHz limit
 
+    FFT_fb_upper = 200000; %Hz
+
+    FFTf(1:round(length(FFTf)*FFT_fb_upper/Fs)) = zeros(1,round(length(FFTf)*FFT_fb_upper/Fs));
+
     for p = 1 : N
         SumFFT(k) = SumFFT(k)+log10(abs(FFT(p)));
     end
@@ -124,7 +128,7 @@ for k = 1 : HighestIndex
         BinFFT(k) = 250;
         fVals = (0:Nf-1)/Lf;
         power = 20*log10(2*(abs(FFTf(1:round(Nf/2+1))))/Nf)+dBpreamp;
-        [maxValue,indexMax] = max(abs(FFTf));
+        [maxValue,indexMax] = max(abs(FFTf(1:round(Nf/2+1))));
         PFreq = indexMax/Lf; %Peak frequency (Hz)
         AMP = max(power); %Amplitude
         PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
