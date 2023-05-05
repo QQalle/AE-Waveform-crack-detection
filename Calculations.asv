@@ -41,9 +41,9 @@ ImpRiseList = transpose(ASCIIOutPut.data(:,RiseIndex));
 ImpRiseList = ImpRiseList(1:HighestIndex);
 
 %This is for syncing the AEwin recording to tensile test recording
-[PeakPARA1, PeakPARA1ind] = max(ImpPARA1); %REMOVE 10000 IF HARDWARE OFFSET
-[CSVDataEND, CSVDataENDind] = max(CSVData.Fun_Load);
-PARAOffset = PeakPARA1ind-CSVDataENDind;
+% [PeakPARA1, PeakPARA1ind] = max(ImpPARA1*10000); %REMOVE 10000 IF HARDWARE OFFSET
+% [CSVDataEND, CSVDataENDind] = max(CSVData.Fun_Load);
+% PARAOffset = PeakPARA1ind-CSVDataENDind;
 % while ImpPARA1(PARAOffset) <= 100/10000 %Check for index when test starts
 %     PARAOffset = PARAOffset + 1;
 % end
@@ -134,18 +134,19 @@ for k = 1 : HighestIndex
             SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
                                     +ImpEnerList(k);
         
-            if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
-                SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
-                                            +ImpEnerList(k);
-            end
-            if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
-                SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
-                                            +ImpEnerList(k);
-            end
-            if 400*10^3 <= PFreq %Frequency band 3
-                SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
-                                            +ImpEnerList(k);
-            end
+        
+
+        if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
+            SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
+                                        +ImpEnerList(k);
+        end
+        if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
+            SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
+                                        +ImpEnerList(k);
+        end
+        if 400*10^3 <= PFreq %Frequency band 3
+            SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
+                                        +ImpEnerList(k);
         end
         %disp(PFreq);
         StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
@@ -264,28 +265,27 @@ end
 
     %CSVDATA COMPILATION
 time2 = (0:length(TimeVector)-1);
-TimeOffs = HitTimeList(PARAOffset);
-TimeOffs = 0;
-% CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
-CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
-    'VariableNames',CSVData.Properties.VariableNames);
-CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
-for i = 1 : length(CSVData.Fun_Time)
-    t = round(CSVData.Fun_Time(i),1)+1;
-    index = t*Resolution;
-    CSVDataOffs(index,2:end) = CSVData(i,2:end);
-end
-CSVDataOffs = fillmissing(CSVDataOffs,"next");  
-PullStop = CSVData.Fun_Time(end) + TimeOffs; %(s) When tensile test ends (stops pulling)
-% PullStop = 70;
-disp("Tensile test end =" + num2str(PullStop) + "s");
-
-%Index of x% strain (typical matrix crack start)
-MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStrain*100) == MCstr, 1);
-%Time of x% strain
-MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
-
-    %Remove MC under x% strain
+% TimeOffs = HitTimeList(PARAOffset);
+% % CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
+% CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
+%     'VariableNames',CSVData.Properties.VariableNames);
+% CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
+% for i = 1 : length(CSVData.Fun_Time)
+%     t = round(CSVData.Fun_Time(i),1)+1;
+%     index = t*Resolution;
+%     CSVDataOffs(index,2:end) = CSVData(i,2:end);
+% end
+% CSVDataOffs = fillmissing(CSVDataOffs,"next");  
+% PullStop = CSVData.Fun_Time(end) + TimeOffs; %(s) When tensile test ends (stops pulling)
+PullStop = 70;
+% disp("Tensile test end =" + num2str(PullStop) + "s");
+% 
+% %Index of x% strain (typical matrix crack start)
+% MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStrain*100) == MCstr, 1);
+% %Time of x% strain
+% MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
+% 
+%     %Remove MC under x% strain
 % x = find(Matrixcracks.HitTime < MCstrboundtime, 1, 'last' );
 % Matrixcracks(1:x,:) = [];
 

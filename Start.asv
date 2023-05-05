@@ -20,7 +20,7 @@ PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
 
-experimentNo = '1003'; %Specify which experiment to analyze
+experimentNo = '2004'; %Specify which experiment to analyze
 run Import_data.m
 
 
@@ -29,26 +29,30 @@ PT = 20*10^-6; %Pre-trigger
 PDT = 35; %Peak Definition Time
 HDT = 150; %Hit Definition Time
 HLT = 300; %Hit Lockout Time
-% Fs = 10*10^6; %Sample frequency (Hz)
+Fs = 5*10^6; %Sample frequency (Hz)
 
     %Input software parameters
 Total = length(ASCIIOutPut.data)/Fs;
-TimeEnd = 80; %Experiment cutoff time [s]
+TimeEnd = 90; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
-MCminFreq = 0*10^3; %[Hz]
-MCmaxFreq = 300*10^3; %[Hz]
+MCminFreq = 400*10^3; %[Hz]
+MCmaxFreq = 1000*10^3; %[Hz]
 MCminAmp = 0; %[dB]
-MCmaxAmp = 99; %[dB]
+MCmaxAmp = 200; %[dB]
 MCminEner = 0; %[kJ]
-MCmaxEner = 10^14; %[aJ]
+MCmaxEner = 10^16; %[aJ]
 MCminDur = 0; %[μs]
-MCminCount = 50;
+MCmaxDur = 2000;
+MCminCount = 0;
+MCmaxCount = 50;
 MCminRise = 0; %[s]
-MCstr = 3; % [%] What is expected start strain for matrix cracks
+MCmaxRise = 45; %[s]
+MCstr = 0.3; % [%] What is expected start strain for matrix cracks
+EnergyCap = 4*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]
@@ -61,10 +65,10 @@ DBminDur = 0; %[μs]
 DBminCount = 100;
 DBminRise = 0; %[s]
 
-CheckVariable = "";
+CheckVariable = "duration";
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
-CheckRangeMIN = 0;
+CheckRangeMIN = 4000;
 CheckRangeMAX = 400000;
 
 

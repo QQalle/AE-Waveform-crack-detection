@@ -147,31 +147,6 @@ legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 hold off
 
-figure('name', 'Cumulative A-ener vs Load','Position',[60,60,1400,700])
-hold on
-yyaxis left
-[~, index] = max(AllValues.PARA1);
-xline(AllValues.HitTime(index));
-plot(time2/Resolution, SpreadEner);
-% FOR POLYNOMIAL % 
-% p = polyfit(time2/Resolution,SpreadEner,20);
-% pol = polyval(p, time2/Resolution);
-% plot(time2/Resolution, pol,'--');
-title('Cumulative A-ener vs Load');
-xlim([0 TimeEnd]);
-%ylim([0 max(SpreadEner)+2]);
-xlabel('Time [s]');
-ylabel('Energy');
-plot(time2/Resolution, SpreadEner1,'--');
-plot(time2/Resolution, SpreadEner2,'--');
-plot(time2/Resolution, SpreadEner3,'--');
-xline(PullStop);
-legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
-    'location','south outside');
-yyaxis right
-plot(AllValues.HitTime, AllValues.PARA1);
-hold off
-
 figure('name', 'Energy-time derivative','Position',[60,60,1400,700])
 disp("calculating Energy-time derivative...")
 hold on
@@ -273,27 +248,27 @@ if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.PARA1, Matrixcracks.Amplitude, 'o');
 end
 hold off
-
-figure('name', 'Load vs Time','Position',[60,60,1400,700])
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
-title('Load vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Load [N]');
-
-figure('name', 'Stress vs Time','Position',[60,60,1400,700])
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStress)
-title('Stress vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Stress [MPa]');
-
-figure('name', 'Strain vs Time','Position',[60,60,1400,700])
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
-title('Strain vs Time');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Strain [%]');
+% 
+% figure('name', 'Load vs Time','Position',[60,60,1400,700])
+% plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
+% title('Load vs Time');
+% xlim([0 TimeEnd]);
+% xlabel('Time [s]');
+% ylabel('Load [N]');
+% 
+% figure('name', 'Stress vs Time','Position',[60,60,1400,700])
+% plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStress)
+% title('Stress vs Time');
+% xlim([0 TimeEnd]);
+% xlabel('Time [s]');
+% ylabel('Stress [MPa]');
+% 
+% figure('name', 'Strain vs Time','Position',[60,60,1400,700])
+% plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStrain*100)
+% title('Strain vs Time');
+% xlim([0 TimeEnd]);
+% xlabel('Time [s]');
+% ylabel('Strain [%]');
 
 figure('name', 'Counts vs Time','Position',[60,60,1400,700]);
 hold on
@@ -313,7 +288,6 @@ scatter(HitTimeList, HAFImpRiseList, '.');
 title('Rise time vs time');
 xlabel('Time [s]');
 ylabel("Rise time [μs]");
-
 if istable(Matrixcracks) %If true = there are matrixcracks
     plot(Matrixcracks.HitTime, Matrixcracks.RiseTime, 'o');
 end
@@ -356,16 +330,16 @@ title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
 ylabel('Hits');
 
-figure('name', 'Load and PARA1','Position',[60,60,1400,700])
-hold on
-plot(CSVData.Fun_Time, CSVData.Fun_Load,'--')
-title('Load and PARA1');
-xlim([0 TimeEnd]);
-xlabel('Time [s]');
-ylabel('Load [N]');
-plot(AllValues.HitTime, AllValues.PARA1)
-plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
-legend('initial','PARA1','offset');
-hold off
+% figure('name', 'Load and PARA1','Position',[60,60,1400,700])
+% hold on
+% plot(CSVData.Fun_Time, CSVData.Fun_Load,'--')
+% title('Load and PARA1');
+% xlim([0 TimeEnd]);
+% xlabel('Time [s]');
+% ylabel('Load [N]');
+% plot(AllValues.HitTime, AllValues.PARA1*10000)
+% plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
+% legend('initial','PARA1','offset');
+% hold off
 
 disp('it worked! =)')
