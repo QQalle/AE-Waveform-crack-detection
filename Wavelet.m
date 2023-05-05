@@ -56,6 +56,8 @@ xlabel("Freq.");
 ylabel("index");
 zlabel("Amp.");
 
+
+
 % plot the wavelet coefficients in a waterfall plot
 %figure; % create a new figure
 %hold on; % hold on to plot multiple surfaces

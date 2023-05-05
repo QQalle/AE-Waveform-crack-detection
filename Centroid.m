@@ -2,8 +2,8 @@ close all
 clear
 
 experimentNo = '1003'; %Specify which experiment to analize
-ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
-ASCIIWaveforms = append('Data\EXP', experimentNo);
+ASCIIOutPut = importdata(append('Data/EXP', experimentNo, '.txt'));
+ASCIIWaveforms = append('Data/EXP', experimentNo);
 
 %Import waveform
 filePattern = fullfile(ASCIIWaveforms, '*.txt');
