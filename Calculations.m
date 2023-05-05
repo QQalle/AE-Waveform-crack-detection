@@ -43,7 +43,6 @@ ImpRiseList = ImpRiseList(1:HighestIndex);
 %This is for syncing the AEwin recording to tensile test recording
 [PeakPARA1, PeakPARA1ind] = max(ImpPARA1); %REMOVE 10000 IF HARDWARE OFFSET
 [CSVDataEND, CSVDataENDind] = max(CSVData.Fun_Load);
-PARAOffset = PeakPARA1ind-CSVDataENDind;
 % while ImpPARA1(PARAOffset) <= 100/10000 %Check for index when test starts
 %     PARAOffset = PARAOffset + 1;
 % end
@@ -264,14 +263,13 @@ end
 
     %CSVDATA COMPILATION
 time2 = (0:length(TimeVector)-1);
-TimeOffs = HitTimeList(PARAOffset);
-TimeOffs = 0;
-% CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
+TimeOffs = HitTimeList(PeakPARA1ind) - CSVData.Fun_Time(CSVDataENDind);
+CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
     'VariableNames',CSVData.Properties.VariableNames);
 CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
 for i = 1 : length(CSVData.Fun_Time)
-    t = round(CSVData.Fun_Time(i),1)+1;
+    t = round(CSVData.Fun_Time(i),1);
     index = t*Resolution;
     CSVDataOffs(index,2:end) = CSVData(i,2:end);
 end
