@@ -332,7 +332,7 @@ for i = 1 : length(PFreqList)
         [Spreadf{1,round(PFreqList(i)./1000*multiplier)};...
         i*TimeEnd/HighestIndex];
 end
-Spreadf = Spreadf(1,1:(1000*multiplier)); %Cap the frequency to 1MHz
+% Spreadf = Spreadf(1,1:(1000*multiplier)); %Cap the frequency to 1MHz
 for i = 1 : length(Spreadf)
     len = length(Spreadf{1,i});
     if len ~= 0

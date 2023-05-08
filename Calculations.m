@@ -155,6 +155,7 @@ for k = 1 : HighestIndex
         PFreqList(K) = round(PFreq,1);
         AMPList(K) = round(AMP,1);
         HitTimeList(K) = HitTime;
+        dbHitTimeList(k) = HitTime;
         HitIndexList(K) = HitIndex;
         HAFImpAmpList(K) = ImpAmpList(k);
         HAFImpDurList(K) = ImpDurList(k);
@@ -195,7 +196,7 @@ for k = 1 : HighestIndex
                                     SaVals = (0:N-1)/L;
                                     SaPFreq = PFreq;
                                 end
-                                  Matrixcracks(MCc,:) = AllValues(k,:);
+                                  Matrixcracks(MCc,:) = AllValues(K,:);
                             end
                         end
                     end
@@ -213,7 +214,7 @@ for k = 1 : HighestIndex
                                 if DBc == 1
                                     Debondings = table(); %Make table first time
                                 end
-                                Debondings(DBc,:) = AllValues(k,:);
+                                Debondings(DBc,:) = AllValues(K,:);
                             end
                         end
                     end
@@ -265,17 +266,23 @@ end
 
     %CSVDATA COMPILATION
 time2 = (0:length(TimeVector)-1);
-TimeOffs = HitTimeList(PeakPARA1ind) - CSVData.Fun_Time(CSVDataENDind);
-CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs;
+%What is the time offset between CSV data and sensor data
+TimeOffs = dbHitTimeList(PeakPARA1ind) - CSVData.Fun_Time(CSVDataENDind);
+if TimeOffs < 0
+    TimeOffs = 1/Resolution;
+    disp("Time offset is negative!")
+end
+CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs; %Add offset
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
     'VariableNames',CSVData.Properties.VariableNames);
 CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
+%This is for converting time frame to correct length
 for i = 1 : length(CSVData.Fun_Time)
-    t = round(CSVData.Fun_Time(i),1);
-    index = t*Resolution;
-    CSVDataOffs(index,2:end) = CSVData(i,2:end);
+    t = round(CSVData.Fun_Time(i),1); %Time
+    index = t*Resolution; %Find new time frame
+    CSVDataOffs(index,2:end) = CSVData(i,2:end); %More time frames
 end
-CSVDataOffs = fillmissing(CSVDataOffs,"next");  
+CSVDataOffs = fillmissing(CSVDataOffs,"next"); %Fill missing time frames
 PullStop = CSVData.Fun_Time(end) + TimeOffs; %(s) When tensile test ends (stops pulling)
 % PullStop = 70;
 disp("Tensile test end =" + num2str(PullStop) + "s");

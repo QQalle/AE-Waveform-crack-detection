@@ -19,9 +19,9 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = false;
+cycle = false; %Use Cycle.m to cycle through multiple experiments
 if cycle == false
-    experimentNo = '2004'; %Specify which experiment to analyze
+    experimentNo = '2002'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
@@ -29,6 +29,7 @@ run Import_data.m
 
 disable_statistics = false;
 disable_read = false;
+ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 
     %Input hardware calibrations
 PT = 20*10^-6; %Pre-trigger
@@ -41,7 +42,6 @@ Fs = 5*10^6; %Sample frequency (Hz)
 Total = length(ASCIIOutPut.data)/Fs;
 TimeEnd = 90; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
-ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
@@ -58,7 +58,7 @@ MCmaxCount = 50;
 MCminRise = 0; %[s]
 MCmaxRise = 45; %[s]
 MCstr = 3; % [%] What is expected start strain for matrix cracks
-EnergyCap = 100000*10^7; %To exclude anomalies
+EnergyCap = 1*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]
