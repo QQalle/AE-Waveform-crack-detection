@@ -73,7 +73,9 @@ for k = 1 : HighestIndex
     baseFileName = TheFiles(k).name;
     %baseFileName = FilesSorted(k);
     fullFileName = fullfile(TheFiles(k).folder, baseFileName);
-    fprintf(1, 'Now reading %s\n', baseFileName);
+    if disable_read == false
+        fprintf(1, 'Now reading %s\n', baseFileName);
+    end
         %Extract values
     Signal = load(fullFileName);
     N = length(Signal);  %number of samples    
@@ -286,6 +288,12 @@ MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
     %Remove MC under x% strain
 % x = find(Matrixcracks.HitTime < MCstrboundtime, 1, 'last' );
 % Matrixcracks(1:x,:) = [];
+
+    %PICK INDEX AT SPECIFIC ENERGY LEVEL (EnerThres)
+EnerThres = 1.5*10^7;
+TEnerThres = time2(find(SpreadEner >= EnerThres,1))/Resolution;
+indStressThres = find(CSVDataOffs.Fun_Time >= TEnerThres,1);
+StressThres = CSVDataOffs.Fun_TensileStress(indStressThres);
 
 if ApplyHAF == true
     disp("HAF enabled");

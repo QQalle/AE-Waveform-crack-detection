@@ -169,7 +169,8 @@ xline(PullStop);
 legend("Total", "0-200kHz", "200-400kHz", ">400kHz",...
     'location','south outside');
 yyaxis right
-plot(AllValues.HitTime, AllValues.PARA1);
+% plot(AllValues.HitTime, AllValues.PARA1);
+plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_TensileStress);
 hold off
 
 figure('name', 'Energy-time derivative','Position',[60,60,1400,700])
@@ -349,8 +350,8 @@ shading interp
 mycolormap = colormap(hsv);
 % mycolormap(1, :) = [1,1,1]; %White background
 mycolormap(1, :) = [0, 0, 0]; %Black background
-% bound = MCstrboundtime*height(mycolormap)/80;
-% mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Reduced lower values
+bound = MCstrboundtime*height(mycolormap)/80;
+mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Reduced lower values
 colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
@@ -358,7 +359,7 @@ ylabel('Hits');
 
 figure('name', 'Load and PARA1','Position',[60,60,1400,700])
 hold on
-plot(CSVData.Fun_Time, CSVData.Fun_Load,'--')
+% plot(CSVData.Fun_Time, CSVData.Fun_Load,'--')
 title('Load and PARA1');
 xlim([0 TimeEnd]);
 xlabel('Time [s]');
@@ -367,5 +368,17 @@ plot(AllValues.HitTime, AllValues.PARA1)
 plot(CSVDataOffs.Fun_Time, CSVDataOffs.Fun_Load)
 legend('initial','PARA1','offset');
 hold off
+
+figure('name', 'Amplitude-Frequency','Position',[60,60,1400,700])
+hold on
+scatter(PFreqList./1000, HAFImpDurList, 30, HAFImpEnerList, '.');
+colorbar
+% xlim([floor(min(PFreqList./1000)/10)*10 ...
+%     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
+% ylim([floor(min(HAFImpAmpList)/10)*10 ...
+%     ceil(max(HAFImpAmpList)/10)*10]);
+title('Amplitude-Frequency');
+xlabel('Peak frequency [kHz]');
+ylabel('Duration [μs]');
 
 disp('it worked! =)')
