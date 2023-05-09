@@ -2,15 +2,15 @@ close all
 clear
 
 experimentNo = [];
-%Experiments = ["2001","2002","2003","2004","2005",...
-%   "2006","2007","2008","2009"];
-Experiments = ["2001","2004","2009"];
+Experiments = ["2001","2002","2003","2004","2005",...
+    "2006","2007","2008","2009"];
+% Experiments = ["2001","2009"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
     experimentNo = SV.Experiments(exp);
     SV.experimentNo = experimentNo; %Variables to save
-    disp(experimentNo)
+%     disp(experimentNo)
     if exp == 1
         StressThres = [];
         TEnerThres = [];
@@ -78,6 +78,7 @@ title('Proportion of total accumulated energi After pullstop vs Time');
 xlabel('Time [sec]');
 ylabel('Percentage of total Energy');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+grid on
 ytickformat('percentage')
 hold off
 
@@ -97,6 +98,8 @@ title('Stress vs Hits');
 xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+grid on
+
 hold off
 
 % SV.Table = sortrows(SV.Table);

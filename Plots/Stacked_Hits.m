@@ -20,7 +20,8 @@ for i = 1 : length(Spreadf)
         end
     end
 end
-imagesc(Spreadf2/multiplier);
+axis([0 1000 0 inf]);
+img = imagesc(Spreadf2/multiplier);
 cc = colorbar;
 title(cc,'Time [s]')
 shading interp
@@ -33,3 +34,4 @@ colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
 ylabel('Hits');
+% set(gca,'Color','k')
