@@ -40,7 +40,7 @@ for i = 1:length(Signals) % loop over the signals
     [wt{i},f{i}] = cwt(Signals{i},'amor',5e6,'FrequencyLimits',[200e3 1200e3]); % perform wavelet transform on each signal
 end
 
-%% 
+%%
 maxAmp = [];
 maxInd = [];
 maxCol = [];
@@ -50,10 +50,9 @@ for j = 1:length(Signals)
     [maxAmp(j), indtemp] = max(wt{j}, [], "all");
     [maxInd(j), maxCol(j)] = ind2sub(size(wt{j}), indtemp);
     maxFreq(j) = f{j}(maxInd(j));
-    pointColor = j;
 end
 
-scatter3(maxFreq, maxCol, abs(maxAmp), pointColor, ".");
+scatter3(maxFreq, maxCol, abs(maxAmp), 30, 1:numel(maxFreq), 'filled');
 xlabel("Freq.");
 ylabel("internal index");
 zlabel("Amp.");
