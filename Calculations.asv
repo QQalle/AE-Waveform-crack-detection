@@ -268,18 +268,22 @@ end
 time2 = (0:length(TimeVector)-1);
 %What is the time offset between CSV data and sensor data
 TimeOffs = dbHitTimeList(PeakPARA1ind) - CSVData.Fun_Time(CSVDataENDind);
+if TimeOffs < 0
+    TimeOffs = 1/Resolution;
+    disp("Time offset is negative!")
+end
 CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs; %Add offset
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
     'VariableNames',CSVData.Properties.VariableNames);
 CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
-
+%This is for converting time frame to correct length
 for i = 1 : length(CSVData.Fun_Time)
     t = round(CSVData.Fun_Time(i),1); %Time
-    index = t*Resolution;
-    CSVDataOffs(index,2:end) = CSVData(i,2:end);
+    index = t*Resolution; %Find new time frame
+    CSVDataOffs(index,2:end) = CSVData(i,2:end); %More time frames
 end
-CSVDataOffs = fillmissing(CSVDataOffs,"next");  
-PullStop = CSVData.Fun_Time(end) + TimeOffs; %(s) When tensile test ends (stops pulling)
+CSVDataOffs = fillmissing(CSVDataOffs,"next"); %Fill missing time frames
+PullStop = CSVData.Fun_Time(end); %(s) When tensile test ends (stops pulling)
 % PullStop = 70;
 disp("Tensile test end =" + num2str(PullStop) + "s");
 
@@ -327,3 +331,12 @@ else
     disp(num2str(LongDur)...
     +" waveforms had too long duration");
 end
+
+%After Pullstop Energy Vector (APE)
+SpreadEnerStopInd = find(time2/Resolution >= PullStop, 1);
+SpreadEnerAPE = (SpreadEner(SpreadEnerStopInd:end)...
+    - min(SpreadEner(SpreadEnerStopInd:end)));
+SpreadEnerAPETime = time2(1:length(SpreadEnerAPE))/Resolution;
+
+
+

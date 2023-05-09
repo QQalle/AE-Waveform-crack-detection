@@ -1,10 +1,10 @@
-close all
+%close all
 clear
 
 experimentNo = [];
-Experiments = ["2001","2002","2003","2004","2005",...
-    "2006","2007","2008","2009"];
-% Experiments = ["2001","2009","2004"];
+%Experiments = ["2001","2002","2003","2004","2005",...
+%   "2006","2007","2008","2009"];
+Experiments = ["2001","2004","2009"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -24,6 +24,8 @@ for exp = 1 : length(SV.Experiments)
         SV.Fun_Time = cell(1,length(SV.Experiments));
         SV.Fun_TensileStress = cell(1,length(SV.Experiments));
         SV.Resolution = [];
+        SV.SpreadEnerAPE = [];
+        SV.SpreadEnerAPETime{exp} = [];
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -38,10 +40,11 @@ for exp = 1 : length(SV.Experiments)
     SV.Fun_Time{exp} = CSVDataOffs.Fun_Time;
     SV.Fun_TensileStress{exp} = CSVDataOffs.Fun_TensileStress;
     SV.Resolution(exp) = Resolution;
-    
+    SV.SpreadEnerAPE{exp} = SpreadEnerAPE;
+    SV.SpreadEnerAPETime{exp} = SpreadEnerAPETime;
 end
 
-
+% Accumaleted Energy v. Stress
 figure('name', 'Cumulative A-ener vs Load','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
@@ -56,6 +59,20 @@ title('Cumulative A-ener vs Load');
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy');
+legend(num2str(round(SV.Table.MPa)));
+hold off
+
+% Accumaleted Energy after PullStop v. Time
+figure('name', 'Cumulative A-ener percentage vs Time (After pullstop)','Position',[60,60,1400,700])
+hold on
+for k = 1 : exp
+    plot(SV.SpreadEnerAPETime{k}, SV.SpreadEnerAPE{k});
+end
+title('Cumulative A-ener vs Time (After pullstop)');
+% xlim([0 max(SV.Fun_Time)]);
+% xlabel('Time [s]');
+xlabel('Time [sec]');
+ylabel('Percentage of total Energy');
 legend(num2str(round(SV.Table.MPa)));
 hold off
 
