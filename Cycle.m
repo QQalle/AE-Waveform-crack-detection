@@ -25,6 +25,8 @@ for exp = 1 : length(SV.Experiments)
         SV.Fun_TensileStress = cell(1,length(SV.Experiments));
         SV.Resolution = [];
         SV.HitTimeList = [];
+        SV.SpreadEnerAPE = [];
+        SV.SpreadEnerAPETime{exp} = [];
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -40,7 +42,8 @@ for exp = 1 : length(SV.Experiments)
     SV.Fun_TensileStress{exp} = CSVDataOffs.Fun_TensileStress;
     SV.Resolution(exp) = Resolution;
     SV.HitTimeList{exp} = HitTimeList;
-    
+    SV.SpreadEnerAPE{exp} = SpreadEnerAPE;
+    SV.SpreadEnerAPETime{exp} = SpreadEnerAPETime;
 end
 
 
@@ -59,6 +62,20 @@ title('Cumulative Acoustic Energy vs Stress');
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
+legend(num2str(round(SV.Table.MPa)));
+hold off
+
+% Accumaleted Energy after PullStop v. Time
+figure('name', 'Cumulative A-ener percentage vs Time (After pullstop)','Position',[60,60,1400,700])
+hold on
+for k = 1 : exp
+    plot(SV.SpreadEnerAPETime{k}, SV.SpreadEnerAPE{k});
+end
+title('Cumulative A-ener vs Time (After pullstop)');
+% xlim([0 max(SV.Fun_Time)]);
+% xlabel('Time [s]');
+xlabel('Time [sec]');
+ylabel('Percentage of total Energy');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
 grid on
 hold off

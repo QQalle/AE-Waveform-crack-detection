@@ -314,3 +314,13 @@ else
     disp(num2str(LongDur)...
     +" waveforms had too long duration");
 end
+
+%After Pullstop Energy (APE)
+SpreadEnerStopInd = find(time2/Resolution >= PullStop, 1);
+SpreadEnerAPE = (SpreadEner(SpreadEnerStopInd:end)...
+    - min(SpreadEner(SpreadEnerStopInd:end)))...
+    ./ max(SpreadEner);
+SpreadEnerAPETime = time2(1:length(SpreadEnerAPE))/Resolution;
+
+
+
