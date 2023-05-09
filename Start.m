@@ -21,7 +21,7 @@ TimeEnd = 124
 %}
 cycle = false; %Use Cycle.m to cycle through multiple experiments
 if cycle == false
-    experimentNo = '2002'; %Specify which experiment to analyze
+    experimentNo = '2009'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
@@ -39,7 +39,7 @@ HLT = 300; %Hit Lockout Time
 Fs = 5*10^6; %Sample frequency (Hz)
 
     %Input software parameters
-Total = length(ASCIIOutPut.data)/Fs;
+Total = length(ASCIIOutPut.data);
 TimeEnd = 90; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
@@ -83,21 +83,21 @@ run Calculations.m %Load waveforms and calculations
 if cycle == false %Make graphs
     %run Plots.m 
     %%% Other %%%
-%     run Plots/Amplitude_PARA1.m
-%     run Plots/Sample_Waveform.m
+    run Plots/Amplitude_PARA1.m
+    run Plots/Sample_Waveform.m
     %%% Time graphs %%%
-%     run Plots/Duration_Time.m
-%     run Plots/Energy_Time.m
-%     run Plots/Load_Time.m
-%     run Plots/Stress_Time.m
-%     run Plots/Strain_Time.m
-%     run Plots/Counts_Time.m
-%     run Plots/Risetime_Time.m
+    run Plots/Duration_Time.m
+    run Plots/Energy_Time.m
+    run Plots/Load_Time.m
+    run Plots/Stress_Time.m
+    run Plots/Strain_Time.m
+    run Plots/Counts_Time.m
+    run Plots/Risetime_Time.m
     %%% Frequency %%%
-%     run Plots/Amplitude_Frequency.m
-%     run Plots/Frequency_Time_Amplitude.m
-%     run Plots/Frequency_Duration_Energy.m
-%     run Plots/Energy_Frequency.m
+    run Plots/Amplitude_Frequency.m
+    run Plots/Frequency_Time_Amplitude.m
+    run Plots/Frequency_Duration_Energy.m
+    run Plots/Energy_Frequency.m
     %%% Advanced %%%
     run Plots/Spectrogram.m %(HAF)
     run Plots/Hitcounter.m
@@ -107,7 +107,7 @@ if cycle == false %Make graphs
     run Plots/Energy_Derivative.m
     run Plots/Stress_Hits.m
     %%% Debug %%%
-%     run Plots/Load_PARA1.m
+    run Plots/Load_PARA1.m
 
 
 end
@@ -115,4 +115,4 @@ end
 if disable_statistics == false
     run Statistics.m %Compute statistics of hits
 end
-disp('it worked! =)')
+% disp('it worked! =)')

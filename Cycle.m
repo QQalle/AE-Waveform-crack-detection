@@ -2,15 +2,15 @@ close all
 clear
 
 experimentNo = [];
-Experiments = ["2001","2002","2003","2004","2005",...
-    "2006","2007","2008","2009"];
-% Experiments = ["2001","2009","2004"];
+% Experiments = ["2001","2002","2003","2004","2005",...
+%     "2006","2007","2008","2009"];
+Experiments = ["2001","2009"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
     experimentNo = SV.Experiments(exp);
     SV.experimentNo = experimentNo; %Variables to save
-    disp(experimentNo)
+%     disp(experimentNo)
     if exp == 1
         StressThres = [];
         TEnerThres = [];
@@ -60,8 +60,9 @@ title('Cumulative Acoustic Energy vs Stress');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+grid on
 hold off
-%%
+
 figure('name','Stress vs Hits','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
@@ -77,6 +78,8 @@ title('Stress vs Hits');
 xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+grid on
+
 hold off
 
 % SV.Table = sortrows(SV.Table);

@@ -33,3 +33,4 @@ colormap(mycolormap);
 title('Frequency vs Stacked hits');
 xlabel('Peak frequency [kHz]');
 ylabel('Hits');
+% set(gca,'Color','k')

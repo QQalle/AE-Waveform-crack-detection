@@ -1,20 +1,3 @@
-    %Import waveform
-filePattern = fullfile(ASCIIWaveforms, '*.txt');
-TheFiles = dir(filePattern);
-
-    %Sort the files
-C = transpose({TheFiles.name});
-% Extract indices from each string using regular expressions
-filesindices = cellfun(@(x) regexp(x, '(?<=_)\d+(?=_\d+\.txt)',...
-    'match'), C, 'UniformOutput', false);
-% Convert indices from cell array of strings to numeric array
-filesindices = cellfun(@(x) str2double(x), filesindices, ...
-    'UniformOutput', false);
-% Sort the indices
-[sorted_indices, order] = sort([filesindices{:}]);
-% Reorder the original cell array using the sorted indices
-TheFiles = TheFiles(order);
-
     %Find index of last sample given TimeEnd
 FileTimes = str2double(regexp({TheFiles.name},...
     '(?<=_)\d+(?=\.txt)', 'match','once'))/1000000;
