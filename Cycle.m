@@ -65,20 +65,23 @@ ylabel('Energy [aJ]');
 legend(num2str(round(SV.Table.MPa)));
 hold off
 
-% Accumaleted Energy after PullStop v. Time
-figure('name', 'Cumulative A-ener percentage vs Time (After pullstop)','Position',[60,60,1400,700])
+% Accumulated Energy after PullStop v. Time
+figure('name', 'Proportion of total accumulated Energi after pullstop vs Time',...
+    'Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
-    plot(SV.SpreadEnerAPETime{k}, SV.SpreadEnerAPE{k});
+    plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k});
 end
-title('Cumulative A-ener vs Time (After pullstop)');
+title('Proportion of total accumulated energi After pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
 ylabel('Percentage of total Energy');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+ytickformat('percentage')
 hold off
-%%
+
+% Stress v. Hits
 figure('name','Stress vs Hits','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
