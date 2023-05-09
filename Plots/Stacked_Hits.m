@@ -20,6 +20,7 @@ for i = 1 : length(Spreadf)
         end
     end
 end
+axis tight
 imagesc(Spreadf2/multiplier);
 cc = colorbar;
 title(cc,'Time [s]')
