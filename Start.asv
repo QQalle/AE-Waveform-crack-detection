@@ -28,7 +28,7 @@ end
 run Import_data.m
 
 disable_statistics = true;
-disable_read = false;
+disable_read = true;
 ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 
     %Input hardware calibrations
@@ -81,6 +81,9 @@ CheckRangeMAX = 400000;
 run Calculations.m %Load waveforms and calculations
 if cycle == false
     run Plots.m %Make graphs
+    run Plots/
 end
-run Statistics.m %Compute statistics of hits
+if disable_statistics == false
+    run Statistics.m %Compute statistics of hits
+end
 disp('Done.');

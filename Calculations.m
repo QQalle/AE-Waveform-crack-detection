@@ -283,7 +283,7 @@ for i = 1 : length(CSVData.Fun_Time)
     CSVDataOffs(index,2:end) = CSVData(i,2:end); %More time frames
 end
 CSVDataOffs = fillmissing(CSVDataOffs,"next"); %Fill missing time frames
-PullStop = CSVData.Fun_Time(end) + TimeOffs; %(s) When tensile test ends (stops pulling)
+PullStop = CSVData.Fun_Time(end); %(s) When tensile test ends (stops pulling)
 % PullStop = 70;
 disp("Tensile test end =" + num2str(PullStop) + "s");
 

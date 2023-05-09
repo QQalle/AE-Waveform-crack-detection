@@ -19,7 +19,7 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = true; %Use Cycle.m to cycle through multiple experiments
+cycle = false; %Use Cycle.m to cycle through multiple experiments
 if cycle == false
     experimentNo = '2002'; %Specify which experiment to analyze
 else
@@ -79,10 +79,35 @@ CheckRangeMAX = 400000;
 
 
 run Calculations.m %Load waveforms and calculations
-if cycle == false
-    run Plots.m %Make graphs
+
+if cycle == false %Make graphs
+    %run Plots.m 
+    %%%% Important %%%%
+    run Plots/Spectrogram.m
+    run Plots/Amplitude_Frequency.m
+    run Plots/Hitcounter.m
+    run Plots/Cumulative_Energy.m
+    run Plots/Cumulative_Energy_Stress.m
+    run Plots/Energy_Derivative.m
+    run Plots/Frequency_Time_Amplitude.m
+    %%%% Less Important %%%%
+    run Plots/Sample_Waveform.m
+    run Plots/Energy_Frequency.m
+    run Plots/Duration_Time.m
+    run Plots/Energy_Time.m
+    run Plots/Amplitude_PARA1.m
+    run Plots/Load_Time.m
+    run Plots/Stress_Time.m
+    run Plots/Strain_Time.m
+    run Plots/Counts_Time.m
+    run Plots/Risetime_Time.m
+    run Plots/Stacked_Hits.m
+    run Plots/Load_PARA1.m
+    run Plots/Frequency_Duration_Energy.m
+    run Plots/Stress_Hits.m
 end
+
 if disable_statistics == false
     run Statistics.m %Compute statistics of hits
 end
-disp('Done.');
+disp('it worked! =)')
