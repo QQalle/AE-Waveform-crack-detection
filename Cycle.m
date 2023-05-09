@@ -2,9 +2,9 @@ close all
 clear
 
 experimentNo = [];
-% Experiments = ["2001","2002","2003","2004","2005",...
-%     "2006","2007","2008","2009"];
-Experiments = ["2001","2009"];
+Experiments = ["2001","2002","2003","2004","2005",...
+    "2006","2007","2008","2009"];
+% Experiments = ["2001","2009"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update

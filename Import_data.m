@@ -24,3 +24,9 @@ filesindices = cellfun(@(x) str2double(x), filesindices, ...
 % Reorder the original cell array using the sorted indices
 TheFiles = TheFiles(order);
 
+baseFN = TheFiles(end).name;
+%baseFileName = FilesSorted(end);
+fullFN = fullfile(TheFiles(end).folder, baseFN);
+EndTime = str2double(regexp(fullFN,...
+        '(?<=_)\d+(?=\.txt)', 'match','once'))/1000000; %Find time of hit
+EndTime = ceil(EndTime);

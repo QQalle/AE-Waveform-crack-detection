@@ -19,7 +19,7 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = false; %Use Cycle.m to cycle through multiple experiments
+cycle = true; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
     experimentNo = '2009'; %Specify which experiment to analyze
 else
@@ -39,8 +39,8 @@ HLT = 300; %Hit Lockout Time
 Fs = 5*10^6; %Sample frequency (Hz)
 
     %Input software parameters
-Total = length(ASCIIOutPut.data);
-TimeEnd = 90; %Experiment cutoff time [s]
+%Use EndTime for total time;
+TimeEnd = EndTime; %Experiment cutoff time [s]
 SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
@@ -58,7 +58,7 @@ MCmaxCount = 50;
 MCminRise = 0; %[s]
 MCmaxRise = 45; %[s]
 MCstr = 3; % [%] What is expected start strain for matrix cracks
-EnergyCap = 1*10^7; %To exclude anomalies
+EnergyCap = 1000*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]
