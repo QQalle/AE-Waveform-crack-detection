@@ -19,7 +19,7 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = false; %Use Cycle.m to cycle through multiple experiments
+cycle = true; %Use Cycle.m to cycle through multiple experiments
 if cycle == false
     experimentNo = '2002'; %Specify which experiment to analyze
 else
@@ -27,8 +27,8 @@ else
 end
 run Import_data.m
 
-disable_statistics = false;
-disable_read = false;
+disable_statistics = true;
+disable_read = true;
 ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 
     %Input hardware calibrations
@@ -82,5 +82,7 @@ run Calculations.m %Load waveforms and calculations
 if cycle == false
     run Plots.m %Make graphs
 end
-run Statistics.m %Compute statistics of hits
+if disable_statistics == false
+    run Statistics.m %Compute statistics of hits
+end
 disp('Done.');
