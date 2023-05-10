@@ -19,7 +19,7 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = false; %Enable this while using Cycle.m to cycle multiple exp
+cycle = true; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
     experimentNo = '2001'; %Specify which experiment to analyze
 else
