@@ -194,4 +194,4 @@ run Plots_cycle/A_E_Stress_0_200kHz.m
 run Plots_cycle/A_E_Stress_200_400kHz.m
 run Plots_cycle/A_E_Stress_400_infkHz.m
 
-% SV.Table = sortrows(SV.Table);
+disp('it worked! =)')
