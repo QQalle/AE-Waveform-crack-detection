@@ -21,7 +21,7 @@ TimeEnd = 124
 %}
 cycle = true; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
-    experimentNo = '2002'; %Specify which experiment to analyze
+    experimentNo = '2005'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
@@ -58,7 +58,7 @@ MCmaxCount = 50;
 MCminRise = 0; %[s]
 MCmaxRise = 45; %[s]
 MCstr = 210; % [%] What is expected start stress for matrix cracks
-EnergyCap = 1.5*10^7; %To exclude anomalies
+EnergyCap = 100000*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]

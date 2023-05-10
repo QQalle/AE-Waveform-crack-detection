@@ -15,5 +15,6 @@ title('Cumulative Acoustic Energy vs Stress 200-400kHz');
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
-legend(Legendtext);
+legend(Legendtext,'location','east outside');
+grid on
 hold off
