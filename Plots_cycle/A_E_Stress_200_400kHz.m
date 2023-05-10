@@ -4,7 +4,9 @@ hold on
 for k = 1 : exp
 %     yyaxis left
 %     plot(SV.time2{k}/SV.Resolution(k), SV.SpreadEner{k});
-    plot(SV.Fun_TensileStress{k}, SV.SpreadEner2{k});
+    PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
+    plot(SV.Fun_TensileStress{k}, SV.SpreadEner2{k},Markers(k),...
+        'MarkerIndices',PullStopInd-2);
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
