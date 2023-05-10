@@ -1,8 +1,3 @@
-C:\MistrasGroup\AEwin for USB Version E5.30\EXP3003.DTA
-MISTRAS-2001 (r) Location Version 
-Version E5.30
-
-Tue May 09 13:30:57 2023
 
  ID      PARA1  RISE  COUN  DURATION AMP PCNTS  ABS-ENERGY
   1  2694.7844     7     1         7  45     1   6.218E+00
