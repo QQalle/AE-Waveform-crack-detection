@@ -2,9 +2,9 @@ close all
 clear
 
 experimentNo = [];
-Experiments = ["2001","2002","2003","2004","2005",...
-    "2006","2007","2008","2009"];
-% Experiments = ["2001","2002"];
+% Experiments = ["2001","2002","2003","2004","2005",...
+%     "2006","2007","2008","2009"];
+% Experiments = ["2003","2004"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -129,7 +129,7 @@ hold on
 for k = 1 : exp
 %     yyaxis left
 %     plot(SV.time2{k}/SV.Resolution(k), SV.SpreadEner{k});
-    plot(SV.Fun_TensileStress{k}, SV.SpreadEner1{k});
+    plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k});
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
@@ -141,8 +141,5 @@ ylabel('Energy [aJ]');
 legend(num2str(round(SV.Table.MPa)));
 hold off
 
-run Plots_cycle/A_E_Stress_0_200kHz.m
-run Plots_cycle/A_E_Stress_200_400kHz.m
-run Plots_cycle/A_E_Stress_400_infkHz.m
 
 % SV.Table = sortrows(SV.Table);

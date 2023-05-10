@@ -20,7 +20,7 @@ for i = 1 : length(Spreadf)
         end
     end
 end
-axis([0 1000 0 inf]);
+axis([0 1000 0.5 inf]);
 img = imagesc(Spreadf2/multiplier);
 cc = colorbar;
 title(cc,'Time [s]')
@@ -28,7 +28,7 @@ shading interp
 mycolormap = colormap(hsv);
 % mycolormap(1, :) = [1,1,1]; %White background
 mycolormap(1, :) = [0, 0, 0]; %Black background
-bound = MCstrboundtime*height(mycolormap)/80;
+bound = MCstrboundtime*height(mycolormap)/TimeEnd;
 mycolormap(1:round(bound), :) = zeros(round(bound), 3); %Reduced lower values
 colormap(mycolormap);
 title('Frequency vs Stacked hits');
