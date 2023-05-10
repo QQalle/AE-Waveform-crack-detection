@@ -1,10 +1,14 @@
 close all
 clear
+warning('off','all')
+warning
 
 experimentNo = [];
-%Experiments = ["2001","2002","2003","2004","2005",...
-%    "2006","2007","2008","2009"];
-Experiments = ["2001", "3001","3002","3003","3004","3005"];
+% Experiments = ["2001","2002","2003","2004","2005",...
+%    "2006","2007","2008","2009","3001","3002","3003","3004","3005"];
+Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
+    "3004","2001","3002","3001","3005","2009","2008"];
+% Experiments = ["2001", "3001","3002","3003","3004","3005"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -77,7 +81,12 @@ end
 Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
     ">-","pentagram-","hexagram-"];
 Markers = [Markers Markers Markers Markers];
-
+% Order = varfun(@(x) (num2str(x)),flip((1:1:length(SV.Experiments))));
+Order = flip((1:1:length(SV.Experiments)));
+Legendtext = plus(num2str(Order'),...
+    plus(": ",...
+    plus(num2str(round(SV.Table.MPa)),...
+    "MPa")));
 figure('name', 'Cumulative Acoustic Energy vs Stress','Position',...
     [60,60,1400,700])
 hold on
@@ -85,8 +94,9 @@ for k = 1 : exp
 %     yyaxis left
 %     plot(SV.time2{k}/SV.Resolution(k), SV.SpreadEner{k});
 %     PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
+    PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
     plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k},Markers(k),...
-        'MarkerIndices',SV.PullStopIndexStress(exp));
+        'MarkerIndices',PullStopInd-2);
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
@@ -95,22 +105,23 @@ title('Cumulative Acoustic Energy vs Stress');
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
-legend(num2str(round(SV.Table.MPa)));
+legend(Legendtext);
 hold off
-%%
+
 % Accumulated Energy after PullStop v. Time
 figure('name', 'Proportion of total accumulated Energi after pullstop vs Time',...
     'Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
-    plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k});
+    plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k},Markers(k),...
+        'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
 title('Proportion of total accumulated energi After pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
 ylabel('Percentage of total Energy');
-legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+legend(Legendtext);
 grid on
 ytickformat('percentage')
 hold off
@@ -125,12 +136,14 @@ for k = 1 : exp
             SpreadHits2(ceil(SV.HitTimeList{k}(i))*SV.Resolution(k):end)+1;
     end
     SmoothSpreadHits2 = smooth(SpreadHits2,100);
-    plot(SV.Fun_TensileStress{k}, SmoothSpreadHits2);
+    PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
+    plot(SV.Fun_TensileStress{k}, SmoothSpreadHits2,Markers(k),...
+        'MarkerIndices',PullStopInd-2);
 end
 title('Stress vs Hits');
 xlabel('Stress [MPa]');
 ylabel('Hits');
-legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+legend(Legendtext);
 grid on
 hold off
 
@@ -149,12 +162,13 @@ for k = 1 : exp
         - min(SmoothSpreadHits2(PullStopInd:end)))...
         ./ max(SmoothSpreadHits2);
     plot(SV.Fun_Time{k}(1:length(SmoothSpreadHits2origo))...
-        , SmoothSpreadHits2origo);
+        , SmoothSpreadHits2origo,Markers(k),...
+        'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
 title('Hits vs Time');
 xlabel('Time [S]');
 ylabel('Hits');
-legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+legend(Legendtext);
 grid on
 hold off
 

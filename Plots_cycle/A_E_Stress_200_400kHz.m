@@ -15,5 +15,5 @@ title('Cumulative Acoustic Energy vs Stress 200-400kHz');
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
-legend(num2str(round(SV.Table.MPa)));
+legend(Legendtext);
 hold off

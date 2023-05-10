@@ -21,7 +21,7 @@ TimeEnd = 124
 %}
 cycle = true; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
-    experimentNo = '2005'; %Specify which experiment to analyze
+    experimentNo = '2002'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
@@ -45,8 +45,8 @@ SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
-MCminFreq = 400*10^3; %[Hz]
-MCmaxFreq = 1000*10^3; %[Hz]
+MCminFreq = 0*10^3; %[Hz]
+MCmaxFreq = 1*10^3; %[Hz]
 MCminAmp = 0; %[dB]
 MCmaxAmp = 200; %[dB]
 MCminEner = 0; %[kJ]
@@ -58,7 +58,7 @@ MCmaxCount = 50;
 MCminRise = 0; %[s]
 MCmaxRise = 45; %[s]
 MCstr = 210; % [%] What is expected start stress for matrix cracks
-EnergyCap = 3*10^7; %To exclude anomalies
+EnergyCap = 1.5*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]
@@ -71,7 +71,7 @@ DBminDur = 0; %[μs]
 DBminCount = 100;
 DBminRise = 0; %[s]
 
-CheckVariable = "duration";
+CheckVariable = "";
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
 CheckRangeMIN = 4000;
