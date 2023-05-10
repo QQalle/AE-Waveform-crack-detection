@@ -7,7 +7,7 @@ experimentNo = [];
 % Experiments = ["2001","2002","2003","2004","2005",...
 %    "2006","2007","2008","2009","3001","3002","3003","3004","3005"];
 Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
-    "3004","2001","3002","3001","3005","2009","2008"];
+     "3004","2001","3002","3001","3005","2009","2008"];
 % Experiments = ["2001", "3001","3002","3003","3004","3005"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
@@ -127,7 +127,7 @@ title('Proportion of Total Accumulated Energy After Pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
-ylabel('Percentage increase of total Energy');
+ylabel('Percentage of total Energy after Pullstop');
 legend(Legendtext,'location','east outside');
 grid on
 ytickformat('percentage')
@@ -155,7 +155,7 @@ grid on
 hold off
 
 % Hits v. time (after pullstop)
-figure('name','Hits vs Time','Position',[60,60,1400,700])
+figure('name','Proportion of Total Hits After Pullstop vs Time','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
     SpreadHits2 = zeros(1,length(SV.time2{k}));
@@ -169,12 +169,13 @@ for k = 1 : exp
         - min(SmoothSpreadHits2(PullStopInd:end)))...
         ./ max(SmoothSpreadHits2);
     plot(SV.Fun_Time{k}(1:length(SmoothSpreadHits2origo))...
-        , SmoothSpreadHits2origo,Markers(k),...
+        , 100*SmoothSpreadHits2origo,Markers(k),...
         'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
-title('Hits vs Time');
+title('Proportion of Total Hits After Pullstop vs Time');
 xlabel('Time [S]');
-ylabel('Hits');
+ylabel('Percentage of Hits after Pullstop');
+ytickformat('percentage')
 legend(Legendtext,'location','east outside');
 grid on
 hold off

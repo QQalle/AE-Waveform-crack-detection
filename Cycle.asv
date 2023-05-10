@@ -123,18 +123,18 @@ for k = 1 : exp
     plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k},Markers(k),...
         'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
-title('Proportion of Total Cumulative Energy After Pullstop vs Time');
+title('Proportion of Total Accumulated Energy After Pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
-ylabel('Percentage of total Energy');
+ylabel('Percentage increase of total Energy');
 legend(Legendtext,'location','east outside');
 grid on
 ytickformat('percentage')
 hold off
 
 % Stress v. Hits
-figure('name','Stress vs Hits','Position',[60,60,1400,700])
+figure('name','Hits vs Stress','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
     SpreadHits2 = zeros(1,length(SV.time2{k}));
@@ -147,7 +147,7 @@ for k = 1 : exp
     plot(SV.Fun_TensileStress{k}, SmoothSpreadHits2,Markers(k),...
         'MarkerIndices',PullStopInd-2);
 end
-title(' Hits');
+title('Hits vs Stress');
 xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(Legendtext,'location','east outside');
@@ -155,7 +155,7 @@ grid on
 hold off
 
 % Hits v. time (after pullstop)
-figure('name','Hits vs Time','Position',[60,60,1400,700])
+figure('name','Po  vs Time','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
     SpreadHits2 = zeros(1,length(SV.time2{k}));
