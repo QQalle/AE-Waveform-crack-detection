@@ -20,6 +20,13 @@ for exp = 1 : length(SV.Experiments)
         SV.Table = Table;
         SV.time2 = cell(1,length(SV.Experiments));
         SV.SpreadEner = cell(1,length(SV.Experiments));
+        SV.SpreadEner1 = cell(1,length(SV.Experiments));
+        SV.SpreadEner2 = cell(1,length(SV.Experiments));
+        SV.SpreadEner3 = cell(1,length(SV.Experiments));
+        SV.EnergyTable = table();
+        SV.EnergyTable1 = table();
+        SV.EnergyTable2 = table();
+        SV.EnergyTable3 = table();
         SV.TimeEnd = [];
         SV.Fun_Time = cell(1,length(SV.Experiments));
         SV.Fun_TensileStress = cell(1,length(SV.Experiments));
@@ -38,6 +45,9 @@ for exp = 1 : length(SV.Experiments)
     end
     SV.time2{exp} = time2;
     SV.SpreadEner{exp} = SpreadEner;
+    SV.SpreadEner1{exp} = SpreadEner1;
+    SV.SpreadEner2{exp} = SpreadEner2;
+    SV.SpreadEner3{exp} = SpreadEner3;
     SV.TimeEnd(exp) = TimeEnd;
     SV.Fun_Time{exp} = CSVDataOffs.Fun_Time;
     SV.Fun_TensileStress{exp} = CSVDataOffs.Fun_TensileStress;
@@ -45,9 +55,21 @@ for exp = 1 : length(SV.Experiments)
     SV.HitTimeList{exp} = HitTimeList;
     SV.SpreadEnerAPE{exp} = SpreadEnerAPE;
     SV.SpreadEnerAPETime{exp} = SpreadEnerAPETime;
-    SV.PullStop{exp} = PullStop;
+    SV.PullStop(exp) = PullStop;
+    PullStopIndex = find(SV.HitTimeList{exp} >= PullStop,1);
+    SV.EnergyTable{exp,1} = experimentNo;
+    SV.EnergyTable{exp,2} = max(SV.SpreadEner{exp});
+    SV.EnergyTable{exp,3} = SV.SpreadEner{exp}(PullStopIndex);
+    SV.EnergyTable1{exp,1} = experimentNo;
+    SV.EnergyTable1{exp,2} = max(SV.SpreadEner1{exp});
+    SV.EnergyTable1{exp,3} = SV.SpreadEner1{exp}(PullStopIndex);
+    SV.EnergyTable2{exp,1} = experimentNo;
+    SV.EnergyTable2{exp,2} = max(SV.SpreadEner2{exp});
+    SV.EnergyTable2{exp,3} = SV.SpreadEner2{exp}(PullStopIndex);
+    SV.EnergyTable3{exp,1} = experimentNo;
+    SV.EnergyTable3{exp,2} = max(SV.SpreadEner3{exp});
+    SV.EnergyTable3{exp,3} = SV.SpreadEner3{exp}(PullStopIndex);
 end
-
 
 figure('name', 'Cumulative Acoustic Energy vs Stress','Position',...
     [60,60,1400,700])
@@ -126,5 +148,9 @@ ylabel('Hits');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
 grid on
 hold off
+
+run Plots_cycle/A_E_Stress_0_200kHz.m
+run Plots_cycle/A_E_Stress_200_400kHz.m
+run Plots_cycle/A_E_Stress_400_infkHz.m
 
 % SV.Table = sortrows(SV.Table);

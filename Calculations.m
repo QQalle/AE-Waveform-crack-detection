@@ -271,7 +271,7 @@ PullStop = CSVData.Fun_Time(end); %(s) When tensile test ends (stops pulling)
 disp("Tensile test end =" + num2str(PullStop) + "s");
 
 %Index of x% strain (typical matrix crack start)
-MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStrain*100) == MCstr, 1);
+MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStress) >= MCstr, 1);
 %Time of x% strain
 MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
 
