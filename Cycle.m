@@ -33,9 +33,8 @@ for exp = 1 : length(SV.Experiments)
         SV.Resolution = [];
         SV.HitTimeList = [];
         SV.SpreadEnerAPE = [];
-        SV.SpreadEnerAPETime{exp} = [];
+        SV.SpreadEnerAPETime = [];
         SV.PullStop = [];
-        
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -90,21 +89,24 @@ ylabel('Energy [aJ]');
 legend(num2str(round(SV.Table.MPa)));
 hold off
 
-% Accumaleted Energy after PullStop v. Time
-figure('name', 'Cumulative A-ener percentage vs Time (After pullstop)','Position',[60,60,1400,700])
+% Accumulated Energy after PullStop v. Time
+figure('name', 'Proportion of total accumulated Energi after pullstop vs Time',...
+    'Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
-    plot(SV.SpreadEnerAPETime{k}, SV.SpreadEnerAPE{k});
+    plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k});
 end
-title('Cumulative A-ener vs Time (After pullstop)');
+title('Proportion of total accumulated energi After pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
 ylabel('Percentage of total Energy');
 legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
 grid on
+ytickformat('percentage')
 hold off
 
+% Stress v. Hits
 figure('name','Stress vs Hits','Position',[60,60,1400,700])
 hold on
 for k = 1 : exp
@@ -123,6 +125,28 @@ legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
 grid on
 hold off
 
+% Hits v. time (after pullstop)
+figure('name','Hits vs Time','Position',[60,60,1400,700])
+hold on
+for k = 1 : exp
+    SpreadHits2 = zeros(1,length(SV.time2{k}));
+    for i = 1 : length(SV.HitTimeList{k})
+        SpreadHits2(ceil(SV.HitTimeList{k}(i))*SV.Resolution(k):end) = ...
+            SpreadHits2(ceil(SV.HitTimeList{k}(i))*SV.Resolution(k):end)+1;
+    end
+    SmoothSpreadHits2 = smooth(SpreadHits2,100);
+    PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop{k}, 1);
+    SmoothSpreadHits2origo = (SmoothSpreadHits2(PullStopInd:end)...
+        - min(SmoothSpreadHits2(PullStopInd:end)))...
+        ./ max(SmoothSpreadHits2);
+    plot(SV.Fun_Time{k}(1:length(SmoothSpreadHits2origo))...
+        , SmoothSpreadHits2origo);
+end
+title('Hits vs Time');
+xlabel('Time [S]');
+ylabel('Hits');
+legend(plus(num2str(round(SV.Table.MPa)),"MPa"));
+grid on
 figure('name', 'A-E vs Stress 0-200kHz','Position',...
     [60,60,1400,700])
 hold on

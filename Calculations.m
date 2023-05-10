@@ -322,5 +322,8 @@ SpreadEnerAPE = (SpreadEner(SpreadEnerStopInd:end)...
     ./ max(SpreadEner);
 SpreadEnerAPETime = time2(1:length(SpreadEnerAPE))/Resolution;
 
+%After Pullstop Hits (APH)
+
+
 
 
