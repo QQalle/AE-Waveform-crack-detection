@@ -14,7 +14,6 @@ ylabel('Energy derivative');
 %         xli.Color = [1 0 0];
 %     end
 % end
-findpeaks(DerivEner,Fs,'MinPeakHeight',500)
-disp(append('Peaks: ',num2str(EnerPeaksNo)));
-disp(append('Peaks divided: ',num2str(EnerPeaksNo2)));
+findpeaks(DerivEner,Fs,'MinPeakHeight',0.2*10^4)
+disp(append(num2str(length(EnerPeaksNo))));
 hold off

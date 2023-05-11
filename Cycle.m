@@ -7,8 +7,9 @@ experimentNo = [];
 % Experiments = ["2001","2002","2003","2004","2005",...
 %    "2006","2007","2008","2009","3001","3002","3003","3004","3005"];
 Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
-     "3004","2001","3002","3001","3005","2009","2008"];
+     "3004","2001","3002","3001","3005","2009","2008"]; %falling order
 % Experiments = ["2001", "3001","3002","3003","3004","3005"];
+% Experiments = ["3001", "3002"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -42,6 +43,8 @@ for exp = 1 : length(SV.Experiments)
         SV.PullStopIndex = [];
         SV.PullStopIndexPlus = [];
         SV.PullStopIndexStress = [];
+        SV.EstCracks = table();
+        SV.EstCracksTotal = cell(1,length(SV.Experiments));
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -86,6 +89,21 @@ for exp = 1 : length(SV.Experiments)
     SV.EnergyTable3{exp,2} = max(SV.SpreadEner3{exp});
     SV.EnergyTable3{exp,3} = SV.SpreadEner3{exp}(SV.PullStopIndex(exp));
     SV.EnergyTable3{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EstCracks{exp,1} = experimentNo;
+    SV.EstCracks{exp,2} = round((2*10^-6)*SV.EnergyTable{exp,3}-10.114);
+    disp(append('Estimated cracks: ',num2str(SV.EstCracks{exp,2})));
+    SV.EstCracks{exp,3} = 0.0083*SV.Table.MPa(exp)^2-3.7326...
+        *SV.Table.MPa(exp)+414.22;
+    SV.EstCracks{exp,4} = mean([SV.EstCracks{exp,2},SV.EstCracks{exp,3}]);
+    for i = 1:length(SV.SpreadEner{exp})
+        if round((2*10^-6)*SV.SpreadEner{exp}(i)-10.114) > 0
+            SV.EstCracksTotal{exp}(i) = ...
+                round((2*10^-6)*SV.SpreadEner{exp}(i)-10.114);
+        else
+            SV.EstCracksTotal{exp}(i) = 0;
+        end
+    end
+    
 end
 %%
 Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
@@ -108,6 +126,7 @@ SV.EnergyTable{:,1} = Legendtext;
 SV.EnergyTable1{:,1} = Legendtext;
 SV.EnergyTable2{:,1} = Legendtext;
 SV.EnergyTable3{:,1} = Legendtext;
+SV.EstCracks{:,1} = Legendtext;
 
 figure('name', 'Cumulative Acoustic Energy vs Stress','Position',...
     [60,60,1400,700])
@@ -209,5 +228,6 @@ hold off
 run Plots_cycle/A_E_Stress_0_200kHz.m
 run Plots_cycle/A_E_Stress_200_400kHz.m
 run Plots_cycle/A_E_Stress_400_infkHz.m
+run Plots_cycle/Estimate_cracks.m
 
 disp('it worked! =)')

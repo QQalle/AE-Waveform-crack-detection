@@ -205,7 +205,6 @@ for k = 1 : HighestIndex
                 end
             end
         end
-        %}
             %Check variable
         if CheckVariable == "duration"
             if CheckRangeMIN <= ImpDurList(K) && ImpDurList(K) <= CheckRangeMAX
@@ -308,7 +307,7 @@ EnerPeaksTot = sum(sqrt(EnerPeaks(1,:)));
 EnerPeaksNo2 = EnerPeaksTot/23;
 
 
-%{
+
 close all
 if istable(Debondings)
     disp("Debondings found:"...
@@ -316,7 +315,6 @@ if istable(Debondings)
 else
     disp("No debondings found");
 end
-%}
 if LongDur/HighestIndex >= 0.05 %5% data loss by too long duration
     disp(num2str(LongDur)...
     +" waveforms had too long duration, consider increasing data collection time.");
