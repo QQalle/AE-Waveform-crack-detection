@@ -65,7 +65,7 @@ for exp = 1 : length(SV.Experiments)
     SV.PullStop(exp) = PullStop;
     SV.PullStopIndex(exp) = find(SV.time2{exp}/Resolution >= PullStop,1);
     if length(SpreadEner) >= SV.PullStopIndex(exp) + Resolution * 15
-        SV.PullStopIndexPlus(exp) = SV.PullStopIndex(exp) + Resolution * 15; %15 for 15 sec
+        SV.PullStopIndexPlus(exp) = SV.PullStopIndex(exp) + Resolution * 10; %15 for 15 sec
     else
         SV.PullStopIndexPlus(exp) = length(SpreadEner);
     end
@@ -77,15 +77,15 @@ for exp = 1 : length(SV.Experiments)
     SV.EnergyTable1{exp,1} = experimentNo;
     SV.EnergyTable1{exp,2} = max(SV.SpreadEner1{exp});
     SV.EnergyTable1{exp,3} = SV.SpreadEner1{exp}(SV.PullStopIndex(exp));
-    SV.EnergyTable1{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EnergyTable1{exp,4} = SV.SpreadEner1{exp}(SV.PullStopIndexPlus(exp));
     SV.EnergyTable2{exp,1} = experimentNo;
     SV.EnergyTable2{exp,2} = max(SV.SpreadEner2{exp});
     SV.EnergyTable2{exp,3} = SV.SpreadEner2{exp}(SV.PullStopIndex(exp));
-    SV.EnergyTable2{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EnergyTable2{exp,4} = SV.SpreadEner2{exp}(SV.PullStopIndexPlus(exp));
     SV.EnergyTable3{exp,1} = experimentNo;
     SV.EnergyTable3{exp,2} = max(SV.SpreadEner3{exp});
     SV.EnergyTable3{exp,3} = SV.SpreadEner3{exp}(SV.PullStopIndex(exp));
-    SV.EnergyTable3{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EnergyTable3{exp,4} = SV.SpreadEner3{exp}(SV.PullStopIndexPlus(exp));
 end
 %%
 Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
