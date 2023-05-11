@@ -17,4 +17,6 @@ xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
 legend(Legendtext,'location','east outside');
 grid on
+xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off

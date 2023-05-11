@@ -111,7 +111,7 @@ for k = 1 : exp
 %     plot(SV.time2{k}/SV.Resolution(k), SV.SpreadEner{k});
 %     PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
     PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
-    plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k},Markers(k),...
+    p = plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k},Markers(k),...
         'MarkerIndices',PullStopInd-2);
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
@@ -123,6 +123,9 @@ xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
 legend(Legendtext,'location','east outside');
 grid on
+yticks((0:1:15)*10^7)
+xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 % Accumulated Energy after PullStop v. Time
@@ -141,6 +144,7 @@ ylabel('Percentage of total Energy after Pullstop');
 legend(Legendtext,'location','east outside');
 grid on
 ytickformat('percentage')
+set(gca,'FontSize',14)
 hold off
 
 % Stress v. Hits
@@ -162,6 +166,8 @@ xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(Legendtext,'location','east outside');
 grid on
+xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 % Hits v. time (after pullstop)
@@ -188,6 +194,9 @@ ylabel('Percentage of Hits after Pullstop');
 ytickformat('percentage')
 legend(Legendtext,'location','east outside');
 grid on
+% yticks((0:1:15)*10^7)
+% xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 run Plots_cycle/A_E_Stress_0_200kHz.m
