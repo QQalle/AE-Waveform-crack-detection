@@ -97,6 +97,12 @@ Legendtext = plus(num2str(Order'),...
     plus(": ",...
     plus(num2str(round(SV.Table.MPa)),...
     "MPa")));
+capped = true;
+if capped == true
+    captext = ', filtered';
+else
+    captext = '';
+end
 
 SV.EnergyTable{:,1} = Legendtext;
 SV.EnergyTable1{:,1} = Legendtext;
@@ -116,7 +122,7 @@ for k = 1 : exp
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
-title('Cumulative Energy vs Stress');
+title(append('Cumulative Energy vs Stress',captext));
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
@@ -136,7 +142,8 @@ for k = 1 : exp
     plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k},Markers(k),...
         'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
-title('Proportion of Total Accumulated Energy After Pullstop vs Time');
+title(append('Proportion of Total Accumulated Energy After Pullstop vs Time',...
+    captext));
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
@@ -161,7 +168,7 @@ for k = 1 : exp
     plot(SV.Fun_TensileStress{k}, SmoothSpreadHits2,Markers(k),...
         'MarkerIndices',PullStopInd-2);
 end
-title('Hits vs Stress');
+title(append('Hits vs Stress',captext));
 xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(Legendtext,'location','east outside');
@@ -188,7 +195,7 @@ for k = 1 : exp
         , 100*SmoothSpreadHits2origo,Markers(k),...
         'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
-title('Proportion of Total Hits After Pullstop vs Time');
+title(append('Proportion of Total Hits After Pullstop vs Time',captext));
 xlabel('Time [S]');
 ylabel('Percentage of Hits after Pullstop');
 ytickformat('percentage')

@@ -10,7 +10,7 @@ for k = 1 : exp
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
-title('Cumulative Acoustic Energy vs Stress >400kHz');
+title(append('Cumulative Acoustic Energy vs Stress >400kHz',captext));
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');

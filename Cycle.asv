@@ -64,8 +64,11 @@ for exp = 1 : length(SV.Experiments)
     SV.SpreadEnerAPETime{exp} = SpreadEnerAPETime;
     SV.PullStop(exp) = PullStop;
     SV.PullStopIndex(exp) = find(SV.time2{exp}/Resolution >= PullStop,1);
-    SV.PullStopIndexPlus(exp) = i...
-            SV.PullStopIndex(exp) + Resolution * 15; %15 for 15 sec
+    if length(SpreadEner) >= SV.PullStopIndex(exp) + Resolution * 15
+        SV.PullStopIndexPlus(exp) = SV.PullStopIndex(exp) + Resolution * 15; %15 for 15 sec
+    else
+        SV.PullStopIndexPlus(exp) = length(SpreadEner);
+    end
     SV.PullStopIndexStress(exp) = find(SV.Fun_Time{exp} >= SV.PullStop(exp), 1);
     SV.EnergyTable{exp,1} = experimentNo;
     SV.EnergyTable{exp,2} = max(SV.SpreadEner{exp});
@@ -94,6 +97,12 @@ Legendtext = plus(num2str(Order'),...
     plus(": ",...
     plus(num2str(round(SV.Table.MPa)),...
     "MPa")));
+capped = true;
+if capped == true
+    captext = ', filtered';
+else
+    captext = '';
+end
 
 SV.EnergyTable{:,1} = Legendtext;
 SV.EnergyTable1{:,1} = Legendtext;
@@ -108,18 +117,21 @@ for k = 1 : exp
 %     plot(SV.time2{k}/SV.Resolution(k), SV.SpreadEner{k});
 %     PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
     PullStopInd = find(SV.Fun_Time{k} >= SV.PullStop(k), 1);
-    plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k},Markers(k),...
+    p = plot(SV.Fun_TensileStress{k}, SV.SpreadEner{k},Markers(k),...
         'MarkerIndices',PullStopInd-2);
 %     yyaxis right
 %     plot(SV.Fun_Time{k}, SV.Fun_TensileStress{k})
 end
-title('Cumulative Energy vs Stress');
+title(append('Cumulative Energy vs Stress',captext));
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Stress [MPa]');
 ylabel('Energy [aJ]');
 legend(Legendtext,'location','east outside');
 grid on
+% yticks((0:1:15)*10^7)
+xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 % Accumulated Energy after PullStop v. Time
@@ -130,7 +142,7 @@ for k = 1 : exp
     plot(SV.SpreadEnerAPETime{k}, 100*SV.SpreadEnerAPE{k},Markers(k),...
         'MarkerIndices',length(SV.SpreadEnerAPETime{k}));
 end
-title('Proportion of Total Accumulated Energy After Pullstop vs Time');
+title(append'Proportion of Total Accumulated Energy After Pullstop vs Time');
 % xlim([0 max(SV.Fun_Time)]);
 % xlabel('Time [s]');
 xlabel('Time [sec]');
@@ -138,6 +150,7 @@ ylabel('Percentage of total Energy after Pullstop');
 legend(Legendtext,'location','east outside');
 grid on
 ytickformat('percentage')
+set(gca,'FontSize',14)
 hold off
 
 % Stress v. Hits
@@ -159,6 +172,8 @@ xlabel('Stress [MPa]');
 ylabel('Hits');
 legend(Legendtext,'location','east outside');
 grid on
+xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 % Hits v. time (after pullstop)
@@ -185,10 +200,13 @@ ylabel('Percentage of Hits after Pullstop');
 ytickformat('percentage')
 legend(Legendtext,'location','east outside');
 grid on
+% yticks((0:1:15)*10^7)
+% xticks(0:50:800)
+set(gca,'FontSize',14)
 hold off
 
 run Plots_cycle/A_E_Stress_0_200kHz.m
 run Plots_cycle/A_E_Stress_200_400kHz.m
 run Plots_cycle/A_E_Stress_400_infkHz.m
 
-% SV.Table = sortrows(SV.Table);
+disp('it worked! =)')
