@@ -6,10 +6,10 @@ warning
 experimentNo = [];
 % Experiments = ["2001","2002","2003","2004","2005",...
 %    "2006","2007","2008","2009","3001","3002","3003","3004","3005"];
-Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
-     "3004","2001","3002","3001","3005","2009","2008"]; %falling order
+% Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
+%      "3004","2001","3002","3001","3005","2009","2008"]; %falling order
 % Experiments = ["2001", "3001","3002","3003","3004","3005"];
-% Experiments = ["3001", "3002"];
+Experiments = ["3001", "3002"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -44,6 +44,7 @@ for exp = 1 : length(SV.Experiments)
         SV.PullStopIndexPlus = [];
         SV.PullStopIndexStress = [];
         SV.EstCracks = table();
+        SV.EstCracksTotal = cell(1,length(SV.Experiments));
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -67,7 +68,7 @@ for exp = 1 : length(SV.Experiments)
     SV.PullStop(exp) = PullStop;
     SV.PullStopIndex(exp) = find(SV.time2{exp}/Resolution >= PullStop,1);
     if length(SpreadEner) >= SV.PullStopIndex(exp) + Resolution * 15
-        SV.PullStopIndexPlus(exp) = SV.PullStopIndex(exp) + Resolution * 15; %15 for 15 sec
+        SV.PullStopIndexPlus(exp) = SV.PullStopIndex(exp) + Resolution * 10; %15 for 15 sec
     else
         SV.PullStopIndexPlus(exp) = length(SpreadEner);
     end
@@ -79,11 +80,11 @@ for exp = 1 : length(SV.Experiments)
     SV.EnergyTable1{exp,1} = experimentNo;
     SV.EnergyTable1{exp,2} = max(SV.SpreadEner1{exp});
     SV.EnergyTable1{exp,3} = SV.SpreadEner1{exp}(SV.PullStopIndex(exp));
-    SV.EnergyTable1{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EnergyTable1{exp,4} = SV.SpreadEner1{exp}(SV.PullStopIndexPlus(exp));
     SV.EnergyTable2{exp,1} = experimentNo;
     SV.EnergyTable2{exp,2} = max(SV.SpreadEner2{exp});
     SV.EnergyTable2{exp,3} = SV.SpreadEner2{exp}(SV.PullStopIndex(exp));
-    SV.EnergyTable2{exp,4} = SV.SpreadEner{exp}(SV.PullStopIndexPlus(exp));
+    SV.EnergyTable2{exp,4} = SV.SpreadEner2{exp}(SV.PullStopIndexPlus(exp));
     SV.EnergyTable3{exp,1} = experimentNo;
     SV.EnergyTable3{exp,2} = max(SV.SpreadEner3{exp});
     SV.EnergyTable3{exp,3} = SV.SpreadEner3{exp}(SV.PullStopIndex(exp));
@@ -93,7 +94,16 @@ for exp = 1 : length(SV.Experiments)
     disp(append('Estimated cracks: ',num2str(SV.EstCracks{exp,2})));
     SV.EstCracks{exp,3} = 0.0083*SV.Table.MPa(exp)^2-3.7326...
         *SV.Table.MPa(exp)+414.22;
-    SV.EstCracks{exp,4} = mean(SV.EstCracks{exp,2},SV.EstCracks{exp,3});
+    SV.EstCracks{exp,4} = mean([SV.EstCracks{exp,2},SV.EstCracks{exp,3}]);
+    for i = 1:length(SV.SpreadEner{exp})
+        if round((2*10^-6)*SV.SpreadEner{exp}(i)-10.114) > 0
+            SV.EstCracksTotal{exp}(i) = ...
+                round((2*10^-6)*SV.SpreadEner{exp}(i)-10.114);
+        else
+            SV.EstCracksTotal{exp}(i) = 0;
+        end
+    end
+    
 end
 %%
 Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
@@ -218,5 +228,6 @@ hold off
 run Plots_cycle/A_E_Stress_0_200kHz.m
 run Plots_cycle/A_E_Stress_200_400kHz.m
 run Plots_cycle/A_E_Stress_400_infkHz.m
+run Plots_cycle/Estimate_cracks.m
 
 disp('it worked! =)')
