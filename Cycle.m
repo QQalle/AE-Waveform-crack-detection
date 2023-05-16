@@ -10,8 +10,12 @@ experimentNo = [];
 %      "2001","3001"]; %Sorted one of each stress level
 Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
      "3004","2001","3002","3001","3005","2009","2008"]; %falling order
- % Experiments = ["2001", "3001","3002","3003","3004","3005"];
+% Experiments = ["2001", "3001","3002","3003","3004","3005"];
 % Experiments = ["3001", "3002","3003","3004"];
+
+% For the Crack_energy graphs
+% Experiments = ["3003", "3004", "3002", "3001", "3005", "2009", "2008"]; 
+
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
