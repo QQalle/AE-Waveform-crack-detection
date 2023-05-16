@@ -15,9 +15,13 @@ energy_data_notabs = table2array(SV.EnergyTable((end-no_tabs+1):end, 2:4));
 cracks_data = cracks(:, 1:(end-no_tabs));
 cracks_data_notabs = cracks(:, (end-no_tabs+1):end);
 
-energy_titles = ["Pullstop Energy", "Pullstop + 10sec", "Total Energy"];
-energy_stop_col = [2, 3, 1];
+max_stress = cellfun(@max, SV.Fun_TensileStress);
 
+% energy_titles = ["Pullstop Energy", "Pullstop + 10sec", "Total Energy"];
+% energy_stop_col = [2, 3, 1];
+
+energy_titles = ["Pullstop Energy"];
+energy_stop_col = [2];
 
 
 for t = energy_titles
@@ -30,14 +34,14 @@ for t = energy_titles
         'Position',[60,60,1400,700]);
     hold on
 
-    lc = polyfit(e, cracks_data, 1);
+    lf_mc_en = polyfit(e, cracks_data, 1);
     % lcp = polyfit(x, p_cracks, 1);
-    f = polyval(lc, [min(e) max(e)]);
+    lff_mc_en = polyval(lf_mc_en, [min(e) max(e)]);
     % fp = polyval(lcp, x);
 
     scatter(e, cracks_data, 50, "filled", "Color", "#0072BD");
     % scatter(e_nt, cracks_data_notabs, 50, "filled", "Color", "#808080");
-    plot([min(e) max(e)], f, "LineStyle", "--", "Color", "#0072BD");
+    plot([min(e) max(e)], lff_mc_en, "LineStyle", "--", "Color", "#0072BD");
     % scatter(x, p_cracks, 50, "filled", "b");
     % plot(x, fp, "Color", "b", "LineStyle","--");
 
@@ -50,5 +54,64 @@ for t = energy_titles
     grid on
     set(gca,'FontSize',14)
     hold off
+
+    %% Energy vs Stress
+    figure('name', plus(t, " vs Max Stress"),...
+        'Position',[60,60,1400,700]);
+    hold on
+
+    %ES_range = 200:1:max(max_stress);
+    st_range = min(max_stress):1:max(max_stress);
+
+    lf_en_st = polyfit(max_stress, e, 2);
+    lff_en_st = polyval(lf_en_st, st_range);
+
+    scatter(max_stress, e, 50, "filled", "Color", "#0072BD");
+    plot(st_range, lff_en_st, "LineStyle", "--",...
+        "Color", "#0072BD");
+
+    title(append(plus(t, " vs Max Stress"),...
+        captext));
+    xlabel('Max Stress [MPa]');
+    ylabel('Accumulated Energy [aJ]');
+    legend(["Accumulated Energy", "Linear fit"], ...
+        'location','east outside');
+    grid on
+    set(gca,'FontSize',14)
+    hold off
+
+    %% Matrix Cracks vs Stress
+    figure('name', "Matrix Cracks vs Max Stress", 'Position',[60,60,1400,700]);
+    hold on
+
+    lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress.^2 + lf_en_st(:,2) * max_stress + lf_en_st(:,3)) + lf_mc_en(:,2);
+    %lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress + lf_en_st(:,2)) + lf_mc_en(:,2);
+    %lff_mc_st = polyval(lf_mc_st, st_range);
+
+    lf_mc_st_real = polyfit(max_stress, cracks, 2);
+    lff_mc_st_real = polyval(lf_mc_st_real, st_range);
+
+
+    scatter(max_stress, cracks, 50, "filled", "Color", "#0072BD");
+
+    plot(st_range, lff_mc_st_real, "LineStyle", "--",...
+        "Color", "#0072BD");
+
+    plot(max_stress, lff_mc_st, "LineStyle", "--",...
+        "Color", "#77AC30");
+
+    title(append("Matrix Cracks vs Max Stress", captext));
+    xlabel('Max Stress [MPa]');
+    ylabel('Average amount of Matrix Cracks per side');
+    legend(["Real data", "Linear fit (Real data)", "Linear fit (calculated using AE energy data)"], ...
+        'location','east outside');
+    grid on
+    set(gca,'FontSize',14)
+    hold off
+
 end
+
+
+
+
 
