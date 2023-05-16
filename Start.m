@@ -1,5 +1,8 @@
 clearvars -except SV && exp
-% close all
+close all
+warning('off','all')
+warning
+
 %{
     Instructions
 Choose no less than 2000 data collection length
@@ -21,7 +24,7 @@ TimeEnd = 124
 %}
 cycle = true; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
-    experimentNo = '3002'; %Specify which experiment to analyze
+    experimentNo = '2005'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
@@ -46,18 +49,18 @@ HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
 MCminFreq = 0*10^3; %[Hz]
-MCmaxFreq = 1*10^3; %[Hz]
+MCmaxFreq = 10*10^3; %[Hz]
 MCminAmp = 0; %[dB]
-MCmaxAmp = 200; %[dB]
+MCmaxAmp = 2000; %[dB]
 MCminEner = 0; %[kJ]
-MCmaxEner = 10^16; %[aJ]
+MCmaxEner = 100^16; %[aJ]
 MCminDur = 0; %[μs]
-MCmaxDur = 2000;
+MCmaxDur = 20000;
 MCminCount = 0;
-MCmaxCount = 50;
+MCmaxCount = 20000;
 MCminRise = 0; %[s]
-MCmaxRise = 45; %[s]
-MCstr = 210; % [%] What is expected start stress for matrix cracks
+MCmaxRise = 400; %[s]
+MCstr = 0; % [MPa] What is expected start stress for matrix cracks
 EnergyCap = 1.5*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
@@ -72,10 +75,11 @@ DBminCount = 100;
 DBminRise = 0; %[s]
 
 CheckVariable = "";
+CheckRangeMIN = 1400;
+CheckRangeMAX = 20000000;
 %Varibles: "peak frequency", "amplitude", "duration", "energy",
 %          "counts," "rise time", "parametric 1"
-CheckRangeMIN = 4000;
-CheckRangeMAX = 400000;
+%See "CheckVariableTable" for information
 
 
 run Calculations.m %Load waveforms and calculations
@@ -98,15 +102,15 @@ if cycle == false %Make graphs
 %     run Plots/Frequency_Time_Amplitude.m
 %     run Plots/Frequency_Duration_Energy.m
 %     run Plots/Energy_Frequency.m
-    %%% Advanced %%%
+%     %%% Advanced %%%
 %     run Plots/Spectrogram.m %(HAF)
 %     run Plots/Hitcounter.m
 %     run Plots/Cumulative_Energy.m
 %     run Plots/Cumulative_Energy_Stress.m
 %     run Plots/Stacked_Hits.m
-    run Plots/Energy_Derivative.m
+%     run Plots/Energy_Derivative.m
 %     run Plots/Stress_Hits.m
-    %%% Debug %%%
+%     %%% Debug %%%
 %     run Plots/Load_PARA1.m
 
 

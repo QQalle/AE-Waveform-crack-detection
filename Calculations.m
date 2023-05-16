@@ -294,14 +294,15 @@ if ApplyHAF == true
 else
     %disp("HAF disabled");
 end
-
+SmoothEner = smooth(SpreadEner,80);
 for k = 1 : length(SpreadEner)-1
-    DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
-    DerivEner1(k) = (SpreadEner1(k+1)-SpreadEner1(k))/(k+1);
-    DerivEner2(k) = (SpreadEner2(k+1)-SpreadEner2(k))/(k+1);
-    DerivEner3(k) = (SpreadEner3(k+1)-SpreadEner3(k))/(k+1);
+    DerivEner(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner1(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner2(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner3(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
 end
 
+    %Find peaks of energy-time derivative
 EnerPeaks = findpeaks(DerivEner,Fs,'MinPeakHeight',500);
 EnerPeaksNo = length(EnerPeaks);
 EnerPeaksTot = sum(sqrt(EnerPeaks(1,:)));
@@ -317,7 +318,7 @@ else
     disp("No debondings found");
 end
 %}
-if LongDur/HighestIndex >= 0.05 %5% data loss by too long duration
+if LongDur/HighestIndex >= 0.1 %10% data loss by too long duration
     disp(num2str(LongDur)...
     +" waveforms had too long duration, consider increasing data collection time.");
 else

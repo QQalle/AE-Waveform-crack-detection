@@ -6,10 +6,12 @@ warning
 experimentNo = [];
 % Experiments = ["2001","2002","2003","2004","2005",...
 %    "2006","2007","2008","2009","3001","3002","3003","3004","3005"];
+% Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
+%      "2001","3001"]; %Sorted one of each stress level
 Experiments = ["2005","2006","2004","2007","2003","2002","3003",...
      "3004","2001","3002","3001","3005","2009","2008"]; %falling order
-% Experiments = ["2001", "3001","3002","3003","3004","3005"];
-% Experiments = ["3001", "3002"];
+ % Experiments = ["2001", "3001","3002","3003","3004","3005"];
+% Experiments = ["3001", "3002","3003","3004"];
 SV = struct('experimentNo',experimentNo,'Experiments',Experiments);
 for exp = 1 : length(SV.Experiments)
         %Variables to update
@@ -45,6 +47,9 @@ for exp = 1 : length(SV.Experiments)
         SV.PullStopIndexStress = [];
         SV.EstCracks = table();
         SV.EstCracksTotal = cell(1,length(SV.Experiments));
+        SV.PeakFrequency = cell(1,length(SV.Experiments));
+        SV.Amplitude = cell(1,length(SV.Experiments));
+        SV.DerivEner = cell(1,length(SV.Experiments));
     end
     run Start.m
     SV.Table.MPa(exp) = max(CSVDataOffs.Fun_TensileStress);
@@ -103,7 +108,9 @@ for exp = 1 : length(SV.Experiments)
             SV.EstCracksTotal{exp}(i) = 0;
         end
     end
-    
+    SV.PeakFrequency{exp} = PFreqList;
+    SV.Amplitude{exp} = HAFImpAmpList;
+    SV.DerivEner{exp} = DerivEner;
 end
 %%
 Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
@@ -111,10 +118,15 @@ Markers = ["o-","*-","x-","square-","diamond-","^-","v-","<-",...
 Markers = [Markers Markers Markers Markers];
 % Order = varfun(@(x) (num2str(x)),flip((1:1:length(SV.Experiments))));
 Order = flip((1:1:length(SV.Experiments)));
+Order2 = [14,13,12,11,10,9,8,6,4];
 Legendtext = plus(num2str(Order'),...
     plus(": ",...
     plus(num2str(round(SV.Table.MPa)),...
     "MPa")));
+% Legendtext2 = plus(num2str(Order2'),...
+%     plus(": ",...
+%     plus(num2str(round(SV.Table.MPa)),...
+%     "MPa")));
 capped = true;
 if capped == true
     captext = ', filtered';
@@ -225,9 +237,11 @@ grid on
 set(gca,'FontSize',14)
 hold off
 
-run Plots_cycle/A_E_Stress_0_200kHz.m
-run Plots_cycle/A_E_Stress_200_400kHz.m
-run Plots_cycle/A_E_Stress_400_infkHz.m
-run Plots_cycle/Estimate_cracks.m
+% run Plots_cycle/A_E_Stress_0_200kHz.m
+% run Plots_cycle/A_E_Stress_200_400kHz.m
+% run Plots_cycle/A_E_Stress_400_infkHz.m
+% run Plots_cycle/Estimate_cracks.m
+% run Plots_cycle/Amplitude_Frequency.m
+run Plots_cycle/DerivEnerMEAN.m
 
 disp('it worked! =)')
