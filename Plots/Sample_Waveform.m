@@ -11,6 +11,7 @@ if istable(Matrixcracks) %Sample waveforms
     xline(PT*10^6); %Pretrigger line
     xline(PT*10^6+SaDur); %Filter line
     xlim([0 max(SaVals*L/Fs*10^6)]);
+    set(gca,'FontSize',14)
     %ylim([-ceil(max(FiltSignal)), ceil(max(FiltSignal))]);
 
     figure('name', 'Power spectrum','Position',[60,60,1400,700]) %Power spectrum
@@ -20,6 +21,7 @@ if istable(Matrixcracks) %Sample waveforms
     xlabel('Frequency [Hz]');
     ylabel('Amplitude [dB]');
     example = 'example_string_123';
+    set(gca,'FontSize',14)
     
     figure('name', 'FFT','Position',[60,60,1400,700]) %FFT
     area(SafVals(1:round(SaNf/2+1)), abs(SaFFT(1:round(SaNf/2+1))));
@@ -28,6 +30,7 @@ if istable(Matrixcracks) %Sample waveforms
     xlabel('Frequency [Hz]');
     ylabel('Voltage [V]');
     legend('Total integral amplitude');
+    set(gca,'FontSize',14)
 else
         disp("No matrix cracks found");
 end
