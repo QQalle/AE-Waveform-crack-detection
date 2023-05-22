@@ -1,9 +1,9 @@
 close all
 clear
 
-experimentNo = '1003'; %Specify which experiment to analize
-ASCIIOutPut = importdata(append('Data\EXP', experimentNo, '.txt'));
-ASCIIWaveforms = append('Data\EXP', experimentNo);
+experimentNo = '2002'; %Specify which experiment to analize
+ASCIIOutPut = importdata(append('Data/EXP', experimentNo, '.txt'));
+ASCIIWaveforms = append('Data/EXP', experimentNo);
 
 %Import waveform
 filePattern = fullfile(ASCIIWaveforms, '*.txt');
@@ -38,14 +38,27 @@ FFTs = cellfun(...
     @(s) (fft(s - mean(s)/L)), Signals, 'UniformOutput', false);
 disp("FFT Done!")
 
+Fs = 5*10^6;
 Fn = Fs/2;
 N = numel(FFTs);
 Fv = linspace(0, 1, fix(L/2)+1)*Fn;
 Iv = 1:numel(Fv);
 
-Centroids = cellfun(@(F) (spectralCentroid(abs(FTs(Iv))*2, Fv)), FFTs, 'UniformOutput', false)
+Centroids = cellfun(@(F) (spectralCentroid(abs(F(Iv))*2, Fv)), FFTs, 'UniformOutput', false);
+disp("Centroids Done!");
 
+plot(Fv, abs(FFTs{100}(1:numel(Iv))));
 
+% plot(cell2mat(Centroids));
+% waterfall(abs(FFTs{1}))
+
+% plot the wavelet coefficients in a waterfall plot
+figure; % create a new figure
+hold on; % hold on to plot multiple surfaces
+for i = 1:length(N) % loop over the wavelet coefficients
+    waterfall(Fv,(1:length(Signals{i}))',abs(FFTs{i}(1:numel(Fv)/2))'); % plot each surface
+end
+hold off; % release the hold
 
 
 

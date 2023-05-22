@@ -1,20 +1,3 @@
-    %Import waveform
-filePattern = fullfile(ASCIIWaveforms, '*.txt');
-TheFiles = dir(filePattern);
-
-    %Sort the files
-C = transpose({TheFiles.name});
-% Extract indices from each string using regular expressions
-filesindices = cellfun(@(x) regexp(x, '(?<=_)\d+(?=_\d+\.txt)',...
-    'match'), C, 'UniformOutput', false);
-% Convert indices from cell array of strings to numeric array
-filesindices = cellfun(@(x) str2double(x), filesindices, ...
-    'UniformOutput', false);
-% Sort the indices
-[sorted_indices, order] = sort([filesindices{:}]);
-% Reorder the original cell array using the sorted indices
-TheFiles = TheFiles(order);
-
     %Find index of last sample given TimeEnd
 FileTimes = str2double(regexp({TheFiles.name},...
     '(?<=_)\d+(?=\.txt)', 'match','once'))/1000000;
@@ -41,10 +24,11 @@ ImpRiseList = transpose(ASCIIOutPut.data(:,RiseIndex));
 ImpRiseList = ImpRiseList(1:HighestIndex);
 
 %This is for syncing the AEwin recording to tensile test recording
-PARAStart = 1;
-while ImpPARA1(PARAStart) <= 100/10000 %Check for index when test starts
-    PARAStart = PARAStart + 1;
-end
+[PeakPARA1, PeakPARA1ind] = max(ImpPARA1); %REMOVE 10000 IF HARDWARE OFFSET
+[CSVDataEND, CSVDataENDind] = max(CSVData.Fun_Load);
+% while ImpPARA1(PARAOffset) <= 100/10000 %Check for index when test starts
+%     PARAOffset = PARAOffset + 1;
+% end
 
 AllValues = table();
 CheckVariableTable = table();
@@ -72,7 +56,9 @@ for k = 1 : HighestIndex
     baseFileName = TheFiles(k).name;
     %baseFileName = FilesSorted(k);
     fullFileName = fullfile(TheFiles(k).folder, baseFileName);
-    fprintf(1, 'Now reading %s\n', baseFileName);
+    if disable_read == false
+        fprintf(1, 'Now reading %s\n', baseFileName);
+    end
         %Extract values
     Signal = load(fullFileName);
     N = length(Signal);  %number of samples    
@@ -127,21 +113,23 @@ for k = 1 : HighestIndex
         PowerMat(:,end+1) = 20*log10(2*(abs(FFT(1:round(N/2+1))))/N);
 
         TimeTable(:,TimeIndex) = abs(FFT);
-
-        SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
+        
+        if ImpEnerList(k) <= EnergyCap
+            SpreadEner(TimeIndex:end) = SpreadEner(TimeIndex:end)...
                                     +ImpEnerList(k);
-
-        if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
-            SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
-                                        +ImpEnerList(k);
-        end
-        if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
-            SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
-                                        +ImpEnerList(k);
-        end
-        if 400*10^3 <= PFreq %Frequency band 3
-            SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
-                                        +ImpEnerList(k);
+        
+            if 0 <= PFreq && PFreq <= 200*10^3 %Frequency band 1
+                SpreadEner1(TimeIndex:end) = SpreadEner1(TimeIndex:end)...
+                                            +ImpEnerList(k);
+            end
+            if 200*10^3 <= PFreq && PFreq <= 400*10^3 %Frequency band 2
+                SpreadEner2(TimeIndex:end) = SpreadEner2(TimeIndex:end)...
+                                            +ImpEnerList(k);
+            end
+            if 400*10^3 <= PFreq %Frequency band 3
+                SpreadEner3(TimeIndex:end) = SpreadEner3(TimeIndex:end)...
+                                            +ImpEnerList(k);
+            end
         end
         %disp(PFreq);
         StackEner(round(PFreq/1000)) = StackEner(round(PFreq/1000))...
@@ -150,6 +138,7 @@ for k = 1 : HighestIndex
         PFreqList(K) = round(PFreq,1);
         AMPList(K) = round(AMP,1);
         HitTimeList(K) = HitTime;
+        dbHitTimeList(k) = HitTime;
         HitIndexList(K) = HitIndex;
         HAFImpAmpList(K) = ImpAmpList(k);
         HAFImpDurList(K) = ImpDurList(k);
@@ -162,17 +151,17 @@ for k = 1 : HighestIndex
         Energy = ImpEnerList(k);
         Amplitude = ImpAmpList(k);
         PeakFrequency = PFreq/1000;
-        Load = ImpPARA1(k);
+        PARA1 = ImpPARA1(k);
         Counts = ImpCountList(k);
         RiseTime = ImpRiseList(k);
         AllValues(K,:) = table(HitIndex,HitTime,PeakFrequency,Amplitude,...
-            Duration,Energy,Load,Counts,RiseTime);
+            Duration,Energy,PARA1,Counts,RiseTime);
         if MCminFreq <= PFreq && PFreq <= MCmaxFreq
             if MCminAmp <= ImpAmpList(k) && ImpAmpList(k) <= MCmaxAmp
                 if MCminEner <= ImpEnerList(k) && ImpEnerList(k) <= MCmaxEner
-                    if MCminDur <= ImpDurList(k)
-                        if MCminCount <= ImpCountList(k)
-                            if MCminRise <= ImpRiseList(k)
+                    if MCminDur <= ImpDurList(k) && ImpDurList(k) <= MCmaxDur
+                        if MCminCount <= ImpCountList(k) && ImpCountList(k) <= MCmaxCount
+                            if MCminRise <= ImpRiseList(k) && ImpRiseList(k) <= MCmaxRise
                                 MCc = MCc + 1;
                                 if MCc == 1
                                     Matrixcracks = table(); %Make table first time
@@ -190,13 +179,14 @@ for k = 1 : HighestIndex
                                     SaVals = (0:N-1)/L;
                                     SaPFreq = PFreq;
                                 end
-                                  Matrixcracks(MCc,:) = AllValues(k,:);
+                                  Matrixcracks(MCc,:) = AllValues(K,:);
                             end
                         end
                     end
                 end
             end
         end
+        %{
             %Define debonding
         if DBminFreq <= PFreq && PFreq <= DBmaxFreq
             if DBminAmp <= ImpAmpList(k) && ImpAmpList(k) <= DBmaxAmp
@@ -208,13 +198,14 @@ for k = 1 : HighestIndex
                                 if DBc == 1
                                     Debondings = table(); %Make table first time
                                 end
-                                Debondings(DBc,:) = AllValues(k,:);
+                                Debondings(DBc,:) = AllValues(K,:);
                             end
                         end
                     end
                 end
             end
         end
+        %}
             %Check variable
         if CheckVariable == "duration"
             if CheckRangeMIN <= ImpDurList(K) && ImpDurList(K) <= CheckRangeMAX
@@ -260,44 +251,65 @@ end
 
     %CSVDATA COMPILATION
 time2 = (0:length(TimeVector)-1);
-TestStart = HitTimeList(PARAStart);
-CSVData.Fun_Time = CSVData.Fun_Time + TestStart;
+%What is the time offset between CSV data and sensor data
+TimeOffs = dbHitTimeList(PeakPARA1ind) - CSVData.Fun_Time(CSVDataENDind);
+if TimeOffs < 0
+    TimeOffs = 1/Resolution;
+    disp("Time offset is negative!")
+end
+CSVData.Fun_Time = CSVData.Fun_Time + TimeOffs; %Add offset
 CSVDataOffs = array2table(NaN(length(TimeVector),width(CSVData)),...
     'VariableNames',CSVData.Properties.VariableNames);
 CSVDataOffs.Fun_Time = transpose(0:length(time2)-1)/Resolution;
+%This is for converting time frame to correct length
 for i = 1 : length(CSVData.Fun_Time)
-    t = round(CSVData.Fun_Time(i),1)+1;
-    index = t*Resolution;
-    CSVDataOffs(index,2:end) = CSVData(i,2:end);
+    t = round(CSVData.Fun_Time(i),1); %Time
+    index = t*Resolution; %Find new time frame
+    CSVDataOffs(index,2:end) = CSVData(i,2:end); %More time frames
 end
-CSVDataOffs = fillmissing(CSVDataOffs,"next");  
-PullStop = CSVData.Fun_Time(end) + TestStart; %(s) When tensile test ends (stops pulling)
+CSVDataOffs = fillmissing(CSVDataOffs,"next"); %Fill missing time frames
+PullStop = CSVData.Fun_Time(end); %(s) When tensile test ends (stops pulling)
+% PullStop = 70;
 disp("Tensile test end =" + num2str(PullStop) + "s");
 
 %Index of x% strain (typical matrix crack start)
-MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStrain*100) == MCstr, 1);
+MCstrboundindex = find(floor(CSVDataOffs.Fun_TensileStress) >= MCstr, 1);
 %Time of x% strain
 MCstrboundtime = CSVDataOffs.Fun_Time(MCstrboundindex);
 
     %Remove MC under x% strain
-x = find(Matrixcracks.HitTime < MCstrboundtime, 1, 'last' );
-Matrixcracks(1:x,:) = [];
+% x = find(Matrixcracks.HitTime < MCstrboundtime, 1, 'last' );
+% Matrixcracks(1:x,:) = [];
+
+    %PICK INDEX AT SPECIFIC ENERGY LEVEL (EnerThres)
+EnerThres = 1.5*10^7;
+TEnerThres = time2(find(SpreadEner >= EnerThres,1))/Resolution;
+indStressThres = find(CSVDataOffs.Fun_Time >= TEnerThres,1);
+StressThres = CSVDataOffs.Fun_TensileStress(indStressThres);
 
 if ApplyHAF == true
     disp("HAF enabled");
     disp("Hits reduced:" + (HighestIndex - HighAmpFilterHits));
     disp("Hits remaining:" + HighAmpFilterHits);
 else
-    disp("HAF disabled");
+    %disp("HAF disabled");
 end
-
+SmoothEner = smooth(SpreadEner,80);
 for k = 1 : length(SpreadEner)-1
-    DerivEner(k) = (SpreadEner(k+1)-SpreadEner(k))/(k+1);
-    DerivEner1(k) = (SpreadEner1(k+1)-SpreadEner1(k))/(k+1);
-    DerivEner2(k) = (SpreadEner2(k+1)-SpreadEner2(k))/(k+1);
-    DerivEner3(k) = (SpreadEner3(k+1)-SpreadEner3(k))/(k+1);
+    DerivEner(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner1(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner2(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
+    DerivEner3(k) = (SmoothEner(k+1)-SmoothEner(k))/(k+1);
 end
 
+    %Find peaks of energy-time derivative
+EnerPeaks = findpeaks(DerivEner,Fs,'MinPeakHeight',500);
+EnerPeaksNo = length(EnerPeaks);
+EnerPeaksTot = sum(sqrt(EnerPeaks(1,:)));
+EnerPeaksNo2 = EnerPeaksTot/23;
+
+
+%{
 close all
 if istable(Debondings)
     disp("Debondings found:"...
@@ -305,10 +317,24 @@ if istable(Debondings)
 else
     disp("No debondings found");
 end
-if LongDur/HighestIndex >= 0.05 %5% data loss by too long duration
+%}
+if LongDur/HighestIndex >= 0.1 %10% data loss by too long duration
     disp(num2str(LongDur)...
     +" waveforms had too long duration, consider increasing data collection time.");
 else
     disp(num2str(LongDur)...
     +" waveforms had too long duration");
 end
+
+%After Pullstop Energy (APE)
+SpreadEnerStopInd = find(time2/Resolution >= PullStop, 1);
+SpreadEnerAPE = (SpreadEner(SpreadEnerStopInd:end)...
+    - min(SpreadEner(SpreadEnerStopInd:end)))...
+    ./ max(SpreadEner);
+SpreadEnerAPETime = time2(1:length(SpreadEnerAPE))/Resolution;
+
+%After Pullstop Hits (APH)
+
+
+
+
