@@ -22,16 +22,16 @@ Fs = 10*10^6 %(Hz)
 PullStop = 48.27 %(s)
 TimeEnd = 124
 %}
-cycle = true; %Enable this while using Cycle.m to cycle multiple exp
+cycle = false; %Enable this while using Cycle.m to cycle multiple exp
 if cycle == false
-    experimentNo = '2005'; %Specify which experiment to analyze
+    experimentNo = '3005'; %Specify which experiment to analyze
 else
     experimentNo = SV.experimentNo;
 end
 run Import_data.m
 
 disable_statistics = true;
-disable_read = true;
+disable_read = false;
 ApplyHAF = false; %Filter out noise based on FFT integral amplitude
 
     %Input hardware calibrations
@@ -48,10 +48,10 @@ SampleNumber = 1; %Matrix crack no. to sample !OBS ERROR IF > TOTAL!
 HAFfilter = -1500; %Recommended: -3000 - 100 Default: -1500
 
     %Calibrate matrix crack definition
-MCminFreq = 0*10^3; %[Hz]
-MCmaxFreq = 10*10^3; %[Hz]
-MCminAmp = 0; %[dB]
-MCmaxAmp = 2000; %[dB]
+MCminFreq = 90*10^3; %[Hz]
+MCmaxFreq = 400*10^3; %[Hz]
+MCminAmp = 40; %[dB]
+MCmaxAmp = 70; %[dB]
 MCminEner = 0; %[kJ]
 MCmaxEner = 100^16; %[aJ]
 MCminDur = 0; %[μs]
@@ -85,35 +85,35 @@ CheckRangeMAX = 20000000;
 
 
 run Calculations.m %Load waveforms and calculations
-
+%%
 if cycle == false %Make graphs
     %run Plots.m 
     %%% Other %%%
-%     run Plots/Amplitude_PARA1.m
-%     run Plots/Sample_Waveform.m
-%     %%% Time graphs %%%
-%     run Plots/Duration_Time.m
-%     run Plots/Energy_Time.m
-%     run Plots/Load_Time.m
-%     run Plots/Stress_Time.m
-%     run Plots/Strain_Time.m
-%     run Plots/Counts_Time.m
-%     run Plots/Risetime_Time.m
+    run Plots/Amplitude_PARA1.m
+    run Plots/Sample_Waveform.m
+    %%% Time graphs %%%
+    run Plots/Duration_Time.m
+    run Plots/Energy_Time.m
+    run Plots/Load_Time.m
+    run Plots/Stress_Time.m
+    run Plots/Strain_Time.m
+    run Plots/Counts_Time.m
+    run Plots/Risetime_Time.m
     %%% Frequency %%%
-%     run Plots/Amplitude_Frequency.m
-%     run Plots/Frequency_Time_Amplitude.m
-%     run Plots/Frequency_Duration_Energy.m
-%     run Plots/Energy_Frequency.m
-%     %%% Advanced %%%
-%     run Plots/Spectrogram.m %(HAF)
-%     run Plots/Hitcounter.m
-%     run Plots/Cumulative_Energy.m
-%     run Plots/Cumulative_Energy_Stress.m
-%     run Plots/Stacked_Hits.m
-%     run Plots/Energy_Derivative.m
-%     run Plots/Stress_Hits.m
-%     %%% Debug %%%
-%     run Plots/Load_PARA1.m
+    run Plots/Amplitude_Frequency.m
+    run Plots/Frequency_Time_Amplitude.m
+    run Plots/Frequency_Duration_Energy.m
+    run Plots/Energy_Frequency.m
+    %%% Advanced %%%
+    run Plots/Spectrogram.m %(HAF)
+    run Plots/Hitcounter.m
+    run Plots/Cumulative_Energy.m
+    run Plots/Cumulative_Energy_Stress.m
+    run Plots/Stacked_Hits.m
+    run Plots/Energy_Derivative.m
+    run Plots/Stress_Hits.m
+    %%% Debug %%%
+    run Plots/Load_PARA1.m
 
 
 end

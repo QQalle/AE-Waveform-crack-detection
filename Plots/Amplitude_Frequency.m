@@ -1,10 +1,12 @@
 figure('name', 'Amplitude-Frequency','Position',[60,60,1400,700])
 hold on
 plot(PFreqList./1000, HAFImpAmpList, '.');
-xlim([floor(min(PFreqList./1000)/10)*10 ...
-    ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
-ylim([floor(min(HAFImpAmpList)/10)*10 ...
-    ceil(max(HAFImpAmpList)/10)*10]);
+% xlim([floor(min(PFreqList./1000)/10)*10 ...
+%     ceil(max(PFreqList./1000)/10)*10]); %nearest 10-number of max sample
+% ylim([floor(min(HAFImpAmpList)/10)*10 ...
+%     ceil(max(HAFImpAmpList)/10)*10]);
+ylim([0 110]);
+xlim([0 1000]);
 title('Amplitude-Frequency');
 xlabel('Peak frequency [kHz]');
 ylabel('Amplitude [dB]');
@@ -23,4 +25,5 @@ patch([MCminFreq/1000 MCminFreq/1000 MCmaxFreq/1000 MCmaxFreq/1000],...
     [MCminAmp MCmaxAmp MCmaxAmp MCminAmp],'r','FaceAlpha',0,...
     'EdgeColor','r');
 plot(CheckVariableTable.PeakFrequency, CheckVariableTable.Amplitude,'*');
+set(gca,'FontSize',14)
 hold off

@@ -1,7 +1,7 @@
 figure('name', 'Energy-time derivative','Position',[60,60,1400,700])
 disp("calculating Energy-time derivative...")
 hold on
-plot(SV.time2/Resolution, DerivEner);
+plot(time2/Resolution, DerivEner);
 % plot(time2/Resolution, DerivEner1,'--');
 % plot(time2/Resolution, DerivEner2,'--');
 % plot(time2/Resolution, DerivEner3,'--');
