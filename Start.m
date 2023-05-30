@@ -62,8 +62,8 @@ MCminRise = 0; %[s]
 MCmaxRise = 45; %[s]
 MCstr = 210; % [%] What is expected start stress for matrix cracks
 
-EnergyCap = 10^16;
-% EnergyCap = 1.5*10^7; %To exclude anomalies
+% EnergyCap = 10^16;
+EnergyCap = 1.5*10^7; %To exclude anomalies
 
     %Calibrate debonding definition
 DBminFreq = 240*10^3; %[Hz]

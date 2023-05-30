@@ -61,9 +61,9 @@ for t = energy_titles
     hold on
 
     %ES_range = 200:1:max(max_stress);
-    st_range = [min(max_stress) max(max_stress)];
+    st_range = min(max_stress):1:max(max_stress);
 
-    lf_en_st = polyfit(max_stress, e, 1);
+    lf_en_st = polyfit(max_stress, e, 2);
     lff_en_st = polyval(lf_en_st, st_range);
 
     scatter(max_stress, e, 50, "filled", "Color", "#0072BD");
@@ -84,10 +84,11 @@ for t = energy_titles
     figure('name', "Matrix Cracks vs Max Stress", 'Position',[60,60,1400,700]);
     hold on
 
-    lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress + lf_en_st(:,2)) + lf_mc_en(:,2);
+    lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress.^2 + lf_en_st(:,2) * max_stress + lf_en_st(:,3)) + lf_mc_en(:,2);
+    %lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress + lf_en_st(:,2)) + lf_mc_en(:,2);
     %lff_mc_st = polyval(lf_mc_st, st_range);
 
-    lf_mc_st_real = polyfit(max_stress, cracks, 1);
+    lf_mc_st_real = polyfit(max_stress, cracks, 2);
     lff_mc_st_real = polyval(lf_mc_st_real, st_range);
 
 

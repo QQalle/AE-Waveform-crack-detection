@@ -7,6 +7,9 @@
 % p_cracks = [87, 79, 13, 1, 3, 0, 0];
 cracks = [106.5, 100.5, 28.5, 3.5, 4, 0, 0];
 
+point_one = 4;
+point_two = 1;
+
 no_tabs = 0;
 
 energy_data = table2array(SV.EnergyTable(1:(end-no_tabs), 2:4));
@@ -30,11 +33,12 @@ for t = energy_titles
     e = energy_data(:, energy_stop_col(i))';
     e_nt = energy_data_notabs(:, energy_stop_col(i))';
 
-    figure('name', plus("Matrix Cracks vs ", t),...
+    figure('name', append("Matrix Cracks vs ", t, ", using two points of data"),...
         'Position',[60,60,1400,700]);
     hold on
 
-    lf_mc_en = polyfit(e, cracks_data, 1);
+    lf_mc_en = polyfit([e(point_one) e(point_two)],...
+        [cracks_data(point_one) cracks_data(point_two)], 1);
     % lcp = polyfit(x, p_cracks, 1);
     lff_mc_en = polyval(lf_mc_en, [min(e) max(e)]);
     % fp = polyval(lcp, x);
@@ -46,9 +50,9 @@ for t = energy_titles
     % plot(x, fp, "Color", "b", "LineStyle","--");
 
     title(append(plus("Matrix Cracks vs ", t),...
-        captext));
+        ", using two points of data", captext));
     xlabel('Energy [aJ]');
-    ylabel('Average amount of Matrix Cracks per side');
+    ylabel('Average amount of Matrix Cracks per side, using two points of data');
     legend(["Data", "Linear fit"], ...
         'location','east outside');
     grid on
@@ -56,7 +60,7 @@ for t = energy_titles
     hold off
 
     %% Energy vs Stress
-    figure('name', plus(t, " vs Max Stress"),...
+    figure('name', plus(t, " vs Max Stress, using two points of data"),...
         'Position',[60,60,1400,700]);
     hold on
 
@@ -70,7 +74,7 @@ for t = energy_titles
     plot(st_range, lff_en_st, "LineStyle", "--",...
         "Color", "#0072BD");
 
-    title(append(plus(t, " vs Max Stress"),...
+    title(append(plus(t, " vs Max Stress, using two points of data"),...
         captext));
     xlabel('Max Stress [MPa]');
     ylabel('Accumulated Energy [aJ]');
@@ -81,7 +85,7 @@ for t = energy_titles
     hold off
 
     %% Matrix Cracks vs Stress
-    figure('name', "Matrix Cracks vs Max Stress", 'Position',[60,60,1400,700]);
+    figure('name', "Matrix Cracks vs Max Stress, using two points of data", 'Position',[60,60,1400,700]);
     hold on
 
     lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress + lf_en_st(:,2)) + lf_mc_en(:,2);
@@ -99,10 +103,10 @@ for t = energy_titles
     plot(max_stress, lff_mc_st, "LineStyle", "--",...
         "Color", "#77AC30");
 
-    title(append("Matrix Cracks vs Max Stress", captext));
+    title(append("Matrix Cracks vs Max Stress, using two points of data", captext));
     xlabel('Max Stress [MPa]');
     ylabel('Average amount of Matrix Cracks per side');
-    legend(["Real data", "Linear fit (Real data)", "Linear fit (calculated using AE energy data)"], ...
+    legend(["Real data", "Linear fit (Real data)", "Linear fit (calculated using AE energy data on only two points)"], ...
         'location','east outside');
     grid on
     set(gca,'FontSize',14)
