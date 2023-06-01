@@ -41,7 +41,8 @@ for t = energy_titles
 
     scatter(e, cracks_data, 50, "filled", "Color", "#0072BD");
     % scatter(e_nt, cracks_data_notabs, 50, "filled", "Color", "#808080");
-    plot([min(e) max(e)], lff_mc_en, "LineStyle", "--", "Color", "#0072BD");
+    plot([min(e) max(e)], lff_mc_en, "LineStyle",...
+        "--", "Color", "#0072BD", "LineWidth", 2);
     % scatter(x, p_cracks, 50, "filled", "b");
     % plot(x, fp, "Color", "b", "LineStyle","--");
 
@@ -50,7 +51,7 @@ for t = energy_titles
     xlabel('Energy [aJ]');
     ylabel('Average amount of Matrix Cracks per side');
     legend(["Data", "Linear fit"], ...
-        'location','east outside');
+        'location','southoutside');
     grid on
     set(gca,'FontSize',14)
     hold off

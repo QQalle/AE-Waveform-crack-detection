@@ -1,4 +1,4 @@
-close all
+fclose all
 clear
 warning('off','all')
 warning

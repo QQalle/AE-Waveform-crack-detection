@@ -95,6 +95,8 @@ for t = energy_titles
 
     lff_mc_st = lf_mc_en(:,1) * (lf_en_st(:,1) * max_stress_range.^2 + lf_en_st(:,2) * max_stress_range + lf_en_st(:,3)) + lf_mc_en(:,2);
 
+    lff_mc_st(lff_mc_st < 0) = 0;
+
     %lf_mc_st_real = polyfit(max_stress, cracks, 2);
     %lff_mc_st_real = polyval(lf_mc_st_real, st_range);
 
